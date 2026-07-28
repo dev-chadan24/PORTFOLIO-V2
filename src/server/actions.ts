@@ -4,7 +4,6 @@ import { Resend } from "resend";
 
 // --- Resend Contact Form ---
 
-const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy");
 const rateLimitCache = new Map<string, number>();
 
 export const sendContactEmail = createServerFn({ method: "POST" })
@@ -30,8 +29,12 @@ export const sendContactEmail = createServerFn({ method: "POST" })
     }
     
     if (!process.env.RESEND_API_KEY) {
-      throw new Error("Resend API key is not configured.");
+      console.error("[Email Error]: RESEND_API_KEY is missing from process.env.");
+      console.error("Diagnostic: Ensure RESEND_API_KEY is set in your .env file and restart the development server. Environment variables are not hot-reloaded.");
+      throw new Error("Server configuration error: Email service is unavailable.");
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     try {
       const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
