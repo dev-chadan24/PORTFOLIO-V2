@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { nitro } from "nitro/vite";
 
@@ -12,9 +12,11 @@ export default defineConfig({
       preset: 'vercel'
     }),
     react(),
-    tailwindcss(),
-    tsconfigPaths()
+    tailwindcss()
   ],
+  resolve: {
+    // Vite now supports tsconfig paths natively
+  },
   server: {
     host: true,
     port: 3000

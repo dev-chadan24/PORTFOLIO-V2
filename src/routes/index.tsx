@@ -1,12 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ThemeProvider } from "../lib/theme";
 import { Nav } from "../components/portfolio/Nav";
 import { Hero } from "../components/portfolio/Hero";
 import { About } from "../components/portfolio/About";
 import { Work } from "../components/portfolio/Work";
 import { Experience } from "../components/portfolio/Experience";
-import { BuildLog } from "../components/portfolio/BuildLog";
+import { ResearchPaper } from "../components/portfolio/ResearchPaper";
 import { Skills } from "../components/portfolio/Skills";
 import { Contact } from "../components/portfolio/Contact";
 import { Colophon } from "../components/portfolio/Colophon";
@@ -42,7 +41,7 @@ function Index() {
   const [introDone, setIntroDone] = useState(false);
 
   return (
-    <ThemeProvider>
+    <>
       <Intro onDone={() => setIntroDone(true)} />
       <div className="grain-overlay" aria-hidden />
       <a
@@ -51,12 +50,7 @@ function Index() {
       >
         Skip to work
       </a>
-      <div
-        style={{
-          opacity: introDone ? 1 : 0,
-          transition: "opacity 900ms cubic-bezier(0.22,1,0.36,1)",
-        }}
-      >
+      <div>
         <Nav />
         <main>
           <Hero />
@@ -64,12 +58,12 @@ function Index() {
           <About />
           <Skills />
           <Experience />
-          <BuildLog />
+          <ResearchPaper />
           <Contact />
         </main>
         <Colophon />
         <BackToTop />
       </div>
-    </ThemeProvider>
+    </>
   );
 }

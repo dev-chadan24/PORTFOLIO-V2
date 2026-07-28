@@ -1,24 +1,8 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { ease, easeEmphasized, easeExit } from "../../lib/motion";
-import { IntroSignature } from "./IntroSignature";
+import signatureImg from "../../assets/Images/Signature.png";
 
-const KEY = "cm-intro-seen-v5";
-
-/**
- * Cinematic 4-scene introduction. One continuous 6s sequence, no hard cuts.
- *   0.0–2.0s  "Hi, I'm Chandan."
- *   2.0–4.0s  "Where design meets development."
- *   4.0–5.5s  Handwritten signature draws
- *   5.5–6.0s  Dissolves into hero
- */
-const T = {
-  scene1: 0,
-  scene2: 2000,
-  scene3: 4000,
-  exit: 5500,
-  end: 6100,
-} as const;
+const KEY = "cm-intro-seen-v9";
 
 type Scene = "name" | "line" | "signature" | null;
 
@@ -30,7 +14,8 @@ export function Intro({ onDone }: { onDone: () => void }) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const seen = sessionStorage.getItem(KEY) === "1";
+    
+    const seen = localStorage.getItem(KEY) === "1";
 
     if (seen) {
       setVisible(false);
@@ -43,8 +28,8 @@ export function Intro({ onDone }: { onDone: () => void }) {
     if (reduced) {
       setScene("signature");
       const timers = [
-        setTimeout(() => setExiting(true), 900),
-        setTimeout(finish, 1500),
+        setTimeout(() => setExiting(true), 1500),
+        setTimeout(finish, 2300),
       ];
       return () => {
         timers.forEach(clearTimeout);
@@ -53,11 +38,11 @@ export function Intro({ onDone }: { onDone: () => void }) {
     }
 
     const timers = [
-      setTimeout(() => setScene("name"), T.scene1 + 100),
-      setTimeout(() => setScene("line"), T.scene2),
-      setTimeout(() => setScene("signature"), T.scene3),
-      setTimeout(() => setExiting(true), T.exit),
-      setTimeout(finish, T.end),
+      setTimeout(() => setScene("name"), 100),
+      setTimeout(() => setScene("line"), 1800),
+      setTimeout(() => setScene("signature"), 3500),
+      setTimeout(() => setExiting(true), 5500),
+      setTimeout(finish, 6300),
     ];
 
     const onKey = (e: KeyboardEvent) => {
@@ -70,12 +55,11 @@ export function Intro({ onDone }: { onDone: () => void }) {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const finish = () => {
     try {
-      sessionStorage.setItem(KEY, "1");
+      localStorage.setItem(KEY, "1");
     } catch {
       /* ignore */
     }
@@ -84,8 +68,10 @@ export function Intro({ onDone }: { onDone: () => void }) {
     setTimeout(() => {
       setVisible(false);
       setTimeout(onDone, 60);
-    }, 550);
+    }, 800);
   };
+
+  const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
   return (
     <AnimatePresence>
@@ -93,41 +79,32 @@ export function Intro({ onDone }: { onDone: () => void }) {
         <motion.div
           key="intro"
           initial={{ opacity: 1 }}
-          animate={
-            exiting
-              ? { opacity: 0, filter: "blur(10px)" }
-              : { opacity: 1, filter: "blur(0px)" }
-          }
-          transition={{ duration: 0.55, ease: easeExit }}
-          className="fixed inset-0 z-[200] grid place-items-center overflow-hidden"
-          style={{ background: "#050608" }}
+          animate={exiting ? { opacity: 0 } : { opacity: 1 }}
+          transition={{ duration: 0.8, ease }}
+          className="fixed inset-0 z-[200] grid place-items-center overflow-hidden bg-bg"
           role="dialog"
           aria-label="Welcome"
         >
-          {/* ambient accent glow */}
-          <motion.div
-            aria-hidden
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2.4, ease: easeEmphasized }}
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(900px circle at 50% 55%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 70%)",
-              filter: "blur(50px)",
-            }}
-          />
-
-          <div className="relative text-center px-6 min-h-[10rem] grid place-items-center">
-            <AnimatePresence mode="wait">
+          <div className="relative w-full max-w-5xl h-[300px] flex items-center justify-center px-6">
+            <AnimatePresence>
               {scene === "name" && (
                 <motion.p
                   key="name"
-                  initial={{ opacity: 0, y: 8, filter: "blur(12px)" }}
+                  initial={{ opacity: 0, y: 18, filter: "blur(4px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                  transition={{ duration: 0.9, ease: easeEmphasized }}
-                  className="text-display text-[clamp(2.75rem,7vw,5.5rem)] leading-[0.95] text-white"
+                  exit={{ opacity: 0, y: -12, filter: "blur(2px)" }}
+                  transition={{ duration: 1.0, ease }}
+                  className="absolute text-center text-text"
+                  style={{
+                    fontFamily: '"Fraunces", ui-serif, Georgia, serif',
+                    fontWeight: 500,
+                    letterSpacing: '-0.04em',
+                    fontSize: 'clamp(2.8rem, 8vw, 6rem)',
+                    lineHeight: 1.05,
+                    fontFeatureSettings: '"cv11", "ss01"',
+                    WebkitFontSmoothing: 'antialiased',
+                    MozOsxFontSmoothing: 'grayscale',
+                  }}
                 >
                   Hi, I&apos;m Chandan.
                 </motion.p>
@@ -135,11 +112,21 @@ export function Intro({ onDone }: { onDone: () => void }) {
               {scene === "line" && (
                 <motion.p
                   key="line"
-                  initial={{ opacity: 0, y: 12, filter: "blur(8px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
-                  transition={{ duration: 0.9, ease: easeEmphasized }}
-                  className="text-display italic text-[clamp(1.5rem,3.4vw,2.6rem)] leading-tight text-white/85"
+                  initial={{ opacity: 0, y: 12, filter: "blur(3px)" }}
+                  animate={{ opacity: 0.65, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -10, filter: "blur(2px)" }}
+                  transition={{ duration: 1.0, ease }}
+                  className="absolute text-center text-text-muted"
+                  style={{
+                    fontFamily: '"Fraunces", ui-serif, Georgia, serif',
+                    fontWeight: 400,
+                    fontStyle: 'italic',
+                    letterSpacing: '-0.01em',
+                    fontSize: 'clamp(1.5rem, 4vw, 2.8rem)',
+                    textTransform: 'none',
+                    WebkitFontSmoothing: 'antialiased',
+                    MozOsxFontSmoothing: 'grayscale',
+                  }}
                 >
                   Where design meets development.
                 </motion.p>
@@ -147,25 +134,26 @@ export function Intro({ onDone }: { onDone: () => void }) {
               {scene === "signature" && (
                 <motion.div
                   key="sig"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5, ease: ease }}
-                  style={{ mixBlendMode: "screen" }}
+                  transition={{ duration: 1.6, ease }}
+                  className="absolute flex justify-center items-center w-full"
                 >
-                  <IntroSignature className="block" />
+                  <img
+                    src={signatureImg}
+                    alt="Chandan Mahapatra Signature"
+                    className="w-[70vw] sm:w-[55vw] md:w-[55vw] lg:w-[50vw] max-w-[680px] h-auto object-contain select-none"
+                    style={{
+                      mixBlendMode: "var(--signature-blend)" as any,
+                      filter: "var(--signature-filter)",
+                      opacity: "var(--signature-opacity)" as any,
+                    }}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-
-          <button
-            onClick={finish}
-            className="absolute bottom-8 right-8 text-[11px] font-mono uppercase tracking-[0.22em] text-white/35 hover:text-white/80 transition-colors duration-500"
-            aria-label="Skip intro"
-          >
-            skip →
-          </button>
         </motion.div>
       )}
     </AnimatePresence>

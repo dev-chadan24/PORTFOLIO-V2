@@ -5,8 +5,8 @@ export const profile = {
   location: "Jeypore, Odisha · India",
   email: "cmahapatra2400@gmail.com",
   linkedin: "https://www.linkedin.com/in/chandan-mahapatra",
-  github: "https://github.com/dev-chandan24",
-  githubHandle: "dev-chandan24",
+  github: "https://github.com/dev-chadan24",
+  githubHandle: "dev-chadan24",
   resume: "/Chandan_Mahapatra_Resume.pdf",
   researchPaper: "/Chandan_Mahapatra_Research_Paper.pdf",
   tagline: "Turning ideas into products people actually use.",
@@ -14,11 +14,10 @@ export const profile = {
     "I'm a developer who enjoys building the whole thing — from the interface people click to the database that keeps their work safe.",
 } as const;
 
-// Snapshot — grouped information cards for the About aside.
 export const snapshot: { label: string; items: string[] }[] = [
   {
     label: "Currently Building",
-    items: ["DoseLoop", "Portfolio V2", "HarvestIQ"],
+    items: ["TradeVault", "DoseLoop", "Portfolio V2", "HarvestIQ"],
   },
   {
     label: "Current Focus",
@@ -46,13 +45,6 @@ export const snapshot: { label: string; items: string[] }[] = [
   },
 ];
 
-// Deprecated but kept for any legacy consumers.
-export const nowGrid = [
-  { label: "Now", value: "Shipping DoseLoop and polishing the parts nobody asks about." },
-  { label: "Building", value: "HarvestIQ — a portfolio dashboard with live market data." },
-  { label: "Reading", value: "Designing Data-Intensive Applications and Rauno Freiberg's notes." },
-  { label: "Based in", value: "Jeypore, Odisha. Working across timezones." },
-] as const;
 
 export const nowPlaying = {
   track: "Enna Sona",
@@ -63,7 +55,7 @@ export const nowPlaying = {
 
 export interface TimelineEntry {
   year: string;
-  kind: "Project" | "Internship" | "Learning" | "Research Paper";
+  kind: "Project" | "Learning" | "Research Paper";
   title: string;
   where?: string;
   note?: string;
@@ -154,6 +146,7 @@ export interface Project {
   links?: { label: string; href: string }[];
   liveDemo?: string;
   github?: string;
+  githubRepo?: string;
   keyLearning?: {
     quote: string;
     description: string;
@@ -162,8 +155,41 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    slug: "doseloop",
+    slug: "tradevault",
     number: "01",
+    name: "TradeVault",
+    subtitle: "Premium market intelligence platform",
+    year: "2026",
+    status: "in-progress",
+    featured: true,
+    thesis: "Bridging the gap between simple trade journals and complex Bloomberg-style terminals.",
+    overview: "An institutional-grade journal and market intelligence platform for retail traders. It seamlessly integrates trade logging, AI-driven performance coaching, and deep market context.",
+    problem: "Retail traders often lose money due to a lack of discipline and emotional 'revenge trading.' Existing journals record PnL but fail to provide contextual market analysis or personalized coaching.",
+    whyBuilt: "To become the ultimate operating system for independent traders, empowering them with data-driven insights to reduce emotional trading and improve win rates consistently.",
+    role: "Full-stack architecture. UI/UX design, state management, and mocked backend integration.",
+    challenges: "Building a Bloomberg-inspired intelligence hub featuring interactive charts, sector heatmaps, market breadth indicators, and an economic calendar without dropping frames.",
+    solutions: "Leveraged Zustand for unidirectional data flow, Recharts for dense data visualization, and implemented a custom Tailwind design system mapping to semantic CSS variables.",
+    deployment: "Vite build deployed on Vercel. Currently operates on a mocked in-memory server with simulated JWT authentication and local storage persistence.",
+    learnings: "Tree shaking and memoization are critical. Expensive calculations like PnL summaries and chart data parsing must be wrapped in useMemo to maintain perfect layout fidelity across responsive breakpoints.",
+    future: "Connect to live market data websockets, implement a Node.js API with PostgreSQL, and integrate real LLM endpoints (OpenAI/Anthropic) for the AI Coach.",
+    tech: ["React", "TypeScript", "Zustand", "Tailwind CSS", "Recharts", "Framer Motion"],
+    descriptors: ["Featured product · 2026", "Fintech · analytics"],
+    highlights: [
+      "Intelligent Trade Journal with automatic tagging and execution quality rating.",
+      "AI Coach (Lunar AI) for personalized LLM-driven performance insights.",
+      "Analytics Dashboard with real-time metrics on win rate, profit factor, and drawdown.",
+      "Market & News Hub with interactive macro charts and economic calendars."
+    ],
+    github: "https://github.com/Pritam-Pattanaik/journal",
+    githubRepo: "Pritam-Pattanaik/journal",
+    keyLearning: {
+      quote: "A premium tool must feel responsive, even when the data is heavy.",
+      description: "Building TradeVault taught me that performance is a feature. Traders rely on split-second decisions; if the UI stutters during a chart render, trust is lost immediately."
+    }
+  },
+  {
+    slug: "doseloop",
+    number: "02",
     name: "DoseLoop",
     subtitle: "Medication companion",
     year: "2026",
@@ -195,7 +221,8 @@ export const projects: Project[] = [
       "Reminders escalate through calm channels, never alarm-style.",
       "Weekly-first views make adherence patterns obvious at a glance.",
     ],
-    github: "https://github.com/dev-chandan24",
+    github: "https://github.com/dev-chadan24",
+    githubRepo: "dev-chadan24/doseloop",
     keyLearning: {
       quote: "Friction breaks habits. Noise breaks trust.",
       description:
@@ -204,7 +231,7 @@ export const projects: Project[] = [
   },
   {
     slug: "harvestiq",
-    number: "02",
+    number: "03",
     name: "HarvestIQ",
     subtitle: "Tax-loss harvesting dashboard",
     year: "2026",
@@ -237,7 +264,8 @@ export const projects: Project[] = [
       "Micro-interactions tuned for long, focused sessions.",
       "Architecture ready for new asset classes and reporting flows.",
     ],
-    github: "https://github.com/dev-chandan24",
+    github: "https://github.com/dev-chadan24",
+    githubRepo: "dev-chadan24/harvestiq",
     keyLearning: {
       quote: "When the data is volatile, the interface must be absolute.",
       description:
@@ -246,7 +274,7 @@ export const projects: Project[] = [
   },
   {
     slug: "expense-tracker",
-    number: "03",
+    number: "04",
     name: "Expense Tracker",
     subtitle: "Personal tool — earlier work",
     year: "2024",
@@ -271,11 +299,12 @@ export const projects: Project[] = [
       "Chart.js visualisations for patterns.",
       "MySQL for structured storage.",
     ],
-    github: "https://github.com/dev-chandan24",
+    github: "https://github.com/dev-chadan24",
+    githubRepo: "dev-chadan24/expense-tracker",
   },
   {
     slug: "one-stop",
-    number: "04",
+    number: "05",
     name: "One Stop",
     subtitle: "E-commerce study — earlier work",
     year: "2024",
@@ -296,7 +325,8 @@ export const projects: Project[] = [
       "Category navigation and data display.",
       "Consistent visual language across the platform.",
     ],
-    github: "https://github.com/dev-chandan24",
+    github: "https://github.com/dev-chadan24",
+    githubRepo: "dev-chadan24/one-stop",
   },
 ];
 

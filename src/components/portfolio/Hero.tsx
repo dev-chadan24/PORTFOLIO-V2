@@ -1,9 +1,9 @@
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useScroll, useSpring, useTransform, useReducedMotion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { Mail, Linkedin, Github, ArrowDownRight, Download } from "lucide-react";
 import { profile } from "./data";
 import { Portrait } from "./Portrait";
-import { profileVideo, signatureImg } from "./projectImages";
+import { profileVideo, signatureImg } from "./media";
 import { ease, useMagnetic } from "../../lib/motion";
 
 /**
@@ -13,30 +13,44 @@ import { ease, useMagnetic } from "../../lib/motion";
 export function Hero() {
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 55, damping: 22 });
-  const sy = useSpring(my, { stiffness: 55, damping: 22 });
+  const sx = useSpring(mx, { stiffness: 80, damping: 18 });
+  const sy = useSpring(my, { stiffness: 80, damping: 18 });
   const glowX = useTransform(sx, [-1, 1], ["30%", "70%"]);
   const glowY = useTransform(sy, [-1, 1], ["30%", "70%"]);
+
+  const shouldReduceMotion = useReducedMotion();
 
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || shouldReduceMotion) return;
     let raf = 0;
-    const handle = (e: MouseEvent) => {
+    const handle = (e: MouseEvent | TouchEvent) => {
       const r = el.getBoundingClientRect();
       cancelAnimationFrame(raf);
+      
+      let clientX, clientY;
+      if ('touches' in e) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      
       raf = requestAnimationFrame(() => {
-        mx.set(((e.clientX - r.left) / r.width) * 2 - 1);
-        my.set(((e.clientY - r.top) / r.height) * 2 - 1);
+        mx.set(((clientX - r.left) / r.width) * 2 - 1);
+        my.set(((clientY - r.top) / r.height) * 2 - 1);
       });
     };
     window.addEventListener("mousemove", handle);
+    window.addEventListener("touchmove", handle as EventListener, { passive: true });
     return () => {
       window.removeEventListener("mousemove", handle);
+      window.removeEventListener("touchmove", handle as EventListener);
       cancelAnimationFrame(raf);
     };
-  }, [mx, my]);
+  }, [mx, my, shouldReduceMotion]);
 
   // Scroll-based dissolve for the mobile portrait
   const { scrollY } = useScroll();
@@ -60,8 +74,8 @@ export function Hero() {
       {/* Ambient cursor-following aurora — soft, reads as light not effect */}
       <motion.div
         aria-hidden
-        style={{ left: glowX, top: glowY }}
-        className="absolute w-[85vw] h-[85vw] max-w-[1200px] max-h-[1200px] -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full hidden md:block"
+        style={{ left: shouldReduceMotion ? "50%" : glowX, top: shouldReduceMotion ? "50%" : glowY }}
+        className="absolute w-[85vw] h-[85vw] max-w-[1200px] max-h-[1200px] -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full md:block"
       >
         <div
           className="w-full h-full opacity-[0.35]"
@@ -79,15 +93,16 @@ export function Hero() {
       <motion.div
         aria-hidden
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.08 }}
-        transition={{ delay: 1.5, duration: 2 }}
-        className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden mix-blend-screen"
+        animate={{ opacity: 0.06 }}
+        transition={{ delay: 1.5, duration: 2.5 }}
+        className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden"
+        style={{ mixBlendMode: "var(--signature-blend)" as any }}
       >
         <img 
           src={signatureImg} 
           alt="" 
           className="w-[120vw] min-w-[800px] max-w-none select-none"
-          style={{ filter: "invert(1) brightness(1.08)" }}
+          style={{ filter: "var(--signature-filter)" }}
         />
       </motion.div>
 
@@ -95,7 +110,7 @@ export function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.9, ease }}
+          transition={{ delay: 0.1, duration: 0.55, ease }}
           className="text-eyebrow mb-10 md:mb-16"
         >
           Developer · building products end to end
@@ -127,9 +142,9 @@ export function Hero() {
             </h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.9, ease }}
+              transition={{ delay: 0.65, duration: 0.6, ease }}
               className="text-display text-[clamp(1.15rem,2.2vw,1.85rem)] leading-tight mb-10 md:mb-14 max-w-2xl"
             >
               Turning ideas into{" "}
@@ -137,34 +152,34 @@ export function Hero() {
             </motion.p>
 
             <motion.p
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.95, duration: 0.9, ease }}
+              transition={{ delay: 0.78, duration: 0.6, ease }}
               className="text-lede max-w-xl mb-12"
             >
               {profile.intro}
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.1, duration: 0.9, ease }}
+              transition={{ delay: 0.9, duration: 0.55, ease }}
               className="flex flex-col gap-6"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center sm:flex-wrap gap-3 sm:gap-1">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:flex-wrap gap-4">
                 <a
                   href="#work"
-                  className="cta-primary group relative inline-flex w-full sm:w-auto justify-center sm:justify-start items-center gap-3 rounded-full pl-5 pr-2 py-2.5 sm:py-2 text-sm bg-text text-bg"
+                  className="cta-primary group relative inline-flex w-full sm:w-auto justify-center sm:justify-between items-center gap-4 rounded-full pl-6 pr-2 py-2 text-[14px] font-medium bg-text text-bg hover:scale-[1.02] active:scale-95 transition-all duration-300"
                 >
                   <span>Selected work</span>
-                  <span className="grid place-items-center w-8 h-8 rounded-full bg-bg/15 transition-colors">
-                    <ArrowDownRight className="w-3.5 h-3.5" />
+                  <span className="grid place-items-center w-8 h-8 rounded-full bg-bg/15 transition-colors group-hover:bg-bg/25">
+                    <ArrowDownRight className="w-4 h-4" />
                   </span>
                 </a>
                 <ResumeButton />
               </div>
 
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2 mt-2">
                 <QuickLink href={`mailto:${profile.email}`} icon={<Mail className="w-3.5 h-3.5" />} label="Email" primary />
                 <QuickLink href={profile.linkedin} icon={<Linkedin className="w-3.5 h-3.5" />} label="LinkedIn" external />
                 <QuickLink href={profile.github} icon={<Github className="w-3.5 h-3.5" />} label="GitHub" external />
@@ -174,12 +189,12 @@ export function Hero() {
 
           {/* Desktop portrait column — subtle parallax, no bob */}
           <motion.div
-            initial={{ opacity: 0, y: 20, filter: "blur(12px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 0.9, duration: 1.4, ease }}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8, ease }}
             className="hidden md:block lg:col-span-5"
           >
-            <motion.div style={{ x: portraitX, y: portraitY }}>
+            <motion.div style={{ x: shouldReduceMotion ? 0 : portraitX, y: shouldReduceMotion ? 0 : portraitY }}>
               <Portrait src={profileVideo} />
             </motion.div>
           </motion.div>
@@ -197,37 +212,32 @@ export function Hero() {
   );
 }
 
-/* ---------- Résumé CTA ---------- */
+/* ---------- Resume CTA ---------- */
 
 function ResumeButton() {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const { x, y } = useMagnetic(ref, 0.25);
-
   return (
-    <motion.a
-      ref={ref}
+    <a
       href={profile.resume}
       download
-      style={{ x, y }}
-      className="resume-cta group relative inline-flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2 rounded-full px-4 py-2 border border-border bg-surface/60 text-text"
+      className="resume-cta group relative inline-flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2.5 rounded-full px-6 py-3 sm:py-[13px] border border-border/80 bg-surface/60 hover:bg-surface text-text hover:border-border transition-all duration-300 hover:scale-[1.02] active:scale-95"
     >
       <Download
-        style={{ width: 15, height: 15, flexShrink: 0 }}
-        className="text-accent transition-transform duration-500 group-hover:translate-y-px"
-        strokeWidth={1.75}
+        style={{ width: 16, height: 16, flexShrink: 0 }}
+        className="text-text-muted group-hover:text-accent transition-colors duration-300"
+        strokeWidth={2}
       />
       <span
         style={{
           fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif",
           fontWeight: 500,
-          fontSize: 12,
+          fontSize: 14,
           letterSpacing: "-0.01em",
           lineHeight: 1,
         }}
       >
         Resume
       </span>
-    </motion.a>
+    </a>
   );
 }
 
@@ -279,9 +289,9 @@ function NameReveal({
   return (
     <span className="inline-block overflow-hidden align-bottom pr-2 pb-2">
       <motion.span
-        initial={{ y: "108%" }}
+        initial={{ y: "105%" }}
         animate={{ y: "0%" }}
-        transition={{ duration: 1.15, delay, ease }}
+        transition={{ duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}
         className={`block ${italic ? "italic font-light text-text-muted" : ""}`}
       >
         {text}
@@ -289,3 +299,4 @@ function NameReveal({
     </span>
   );
 }
+

@@ -1,53 +1,65 @@
-// Single motion vocabulary for the portfolio.
-// Vertical motion tokens: 8–12px. Anything larger is rejected.
+// Centralized motion vocabulary — Linear/Apple/Raycast calibration.
+// Philosophy: fast reveal, zero blur, spring-like easing, small vertical travel.
 
 import { useEffect, type RefObject } from "react";
 import { useMotionValue, useSpring, useReducedMotion, type MotionValue } from "framer-motion";
 
-// Kept as the default tuple for legacy imports (`ease`).
-export const ease = [0.22, 1, 0.36, 1] as const;
-export const easeEmphasized = [0.16, 1, 0.3, 1] as const;
+// Primary easing: fast-start, smooth arrival. Matches iOS spring character.
+export const ease = [0.25, 0.1, 0.25, 1] as const;
+// Emphasized: slight overshoot feel, used for entrances.
+export const easeEmphasized = [0.22, 1, 0.36, 1] as const;
+// Exit: fast out. Used for things leaving the screen.
 export const easeExit = [0.4, 0, 1, 1] as const;
 export const easeOut = easeEmphasized;
 
 export const duration = {
-  instant: 0.18,
-  quick: 0.35,
-  standard: 0.7,
-  long: 1.2,
-  cinematic: 2.0,
+  instant:  0.12,
+  quick:    0.22,
+  standard: 0.45,
+  long:     0.75,
+  cinematic: 1.2,
 } as const;
 
+// Springs: non-bouncy, grounded. Stiffness 300 = snappy. Damping 30 = no overshoot.
 export const spring = {
-  soft: { type: "spring" as const, stiffness: 120, damping: 22, mass: 0.8 },
-  snappy: { type: "spring" as const, stiffness: 220, damping: 26 },
-  magnetic: { type: "spring" as const, stiffness: 220, damping: 22, mass: 0.6 },
+  // Crisp UI feedback
+  snappy:   { type: "spring" as const, stiffness: 340, damping: 30, mass: 0.7 },
+  // Natural, slightly slower — for cards, modals
+  soft:     { type: "spring" as const, stiffness: 200, damping: 25, mass: 0.9 },
+  // For cursor-following magnetic effects
+  magnetic: { type: "spring" as const, stiffness: 160, damping: 22, mass: 0.6 },
+  // For nav pill layout animations
+  nav:      { type: "spring" as const, stiffness: 400, damping: 36, mass: 0.5 },
 } as const;
 
+// Scroll reveal: no blur, small y-travel, fast duration.
 export const variants = {
-  dissolve: {
-    hidden: { opacity: 0, filter: "blur(10px)" },
-    show: { opacity: 1, filter: "blur(0px)" },
-  },
+  // Simple fade + subtle rise. No blur — it's heavy on mobile.
   rise: {
-    hidden: { opacity: 0, y: 12 },
-    show: { opacity: 1, y: 0 },
+    hidden: { opacity: 0, y: 10 },
+    show:   { opacity: 1, y: 0 },
   },
+  // Pure fade — for elements that should appear without movement.
   fadeIn: {
     hidden: { opacity: 0 },
-    show: { opacity: 1 },
+    show:   { opacity: 1 },
+  },
+  // Slide from left — for horizontal reveals.
+  slideIn: {
+    hidden: { opacity: 0, x: -12 },
+    show:   { opacity: 1, x: 0 },
   },
 } as const;
 
-export const viewport = { once: true, margin: "-80px" } as const;
+export const viewport = { once: true, margin: "-60px" } as const;
 
 /**
- * Magnetic hover — pointer inside the element pulls it toward the cursor
- * via a soft spring. Respects prefers-reduced-motion.
+ * useMagnetic — pointer inside the element pulls it toward the cursor.
+ * Respects prefers-reduced-motion.
  */
 export function useMagnetic(
   ref: RefObject<HTMLElement | null>,
-  strength = 0.35,
+  strength = 0.3,
 ): { x: MotionValue<number>; y: MotionValue<number> } {
   const reduced = useReducedMotion();
   const x = useMotionValue(0);

@@ -54,95 +54,93 @@
   --radius-xl: 32px;
 }
 
-/* Dark = default. Graphite & Mist — deep midnight, navy, warm silver. No purple. */
+/* Dark — deep graphite, warm charcoal, elegant contrast. Premium depth. */
 :root,
 .dark {
-  --bg-deep: oklch(0.13 0.018 258);
-  --bg: oklch(0.15 0.02 258);
-  --surface: oklch(0.21 0.015 258);
-  --elevated: oklch(0.245 0.018 258);
-  --elevated-2: oklch(0.285 0.025 255);
-  --border: oklch(0.30 0.018 258);
-  --border-strong: oklch(0.40 0.020 258);
-  --text: oklch(0.96 0.008 260);
-  --text-muted: oklch(0.74 0.030 275);   /* lavender mist */
-  --text-subtle: oklch(0.62 0.015 260);  /* warm silver */
-  --accent: oklch(0.82 0.09 220);        /* soft cyan */
-  --accent-soft: oklch(0.74 0.05 220);
-  --glow: color-mix(in oklab, var(--accent) 10%, transparent);
-  --glow-strong: color-mix(in oklab, var(--accent) 20%, transparent);
-  --focus: oklch(0.82 0.09 220);
-  --danger: oklch(0.65 0.22 25);
+  --bg-deep: oklch(0.115 0.016 258);      /* near-black, warm tint */
+  --bg:      oklch(0.138 0.018 258);
+  --surface: oklch(0.195 0.014 260);
+  --elevated: oklch(0.230 0.016 258);
+  --elevated-2: oklch(0.268 0.020 256);
+  --border: oklch(0.285 0.016 258);
+  --border-strong: oklch(0.38 0.018 258);
+  --text: oklch(0.955 0.007 258);          /* not pure white — warm off-white */
+  --text-muted: oklch(0.70 0.022 268);    /* cool silver mist */
+  --text-subtle: oklch(0.555 0.014 262);  /* dimmer silver */
+  --accent: oklch(0.795 0.095 218);       /* refined cyan-blue */
+  --accent-soft: oklch(0.715 0.055 220);
+  --glow: color-mix(in oklab, var(--accent) 12%, transparent);
+  --glow-strong: color-mix(in oklab, var(--accent) 22%, transparent);
+  --focus: oklch(0.795 0.095 218);
+  --danger: oklch(0.64 0.22 25);
 
-  --glass-bg: color-mix(in oklab, var(--surface) 55%, transparent);
-  --grain-opacity: 0.035;
+  --glass-bg: color-mix(in oklab, var(--surface) 52%, transparent);
+  --grain-opacity: 0.028;
 
   --shadow-flat: 0 1px 0 color-mix(in oklab, white 5%, transparent) inset;
   --shadow-soft:
     0 1px 0 color-mix(in oklab, white 6%, transparent) inset,
-    0 12px 32px -18px color-mix(in oklab, black 70%, transparent),
-    0 2px 6px -3px color-mix(in oklab, black 40%, transparent);
+    0 12px 32px -18px color-mix(in oklab, black 75%, transparent),
+    0 2px 6px -3px color-mix(in oklab, black 45%, transparent);
   --shadow-lift:
     0 1px 0 color-mix(in oklab, white 7%, transparent) inset,
-    0 30px 70px -32px color-mix(in oklab, black 80%, transparent),
-    0 8px 20px -10px color-mix(in oklab, black 50%, transparent);
+    0 30px 70px -32px color-mix(in oklab, black 85%, transparent),
+    0 8px 20px -10px color-mix(in oklab, black 55%, transparent);
   --shadow-glow:
     0 0 0 1px color-mix(in oklab, var(--accent) 18%, transparent),
     0 20px 60px -20px var(--glow-strong);
 
-  /* Signature asset: PNG has black ink on opaque white bg.
-     filter  → inverts ink to white (bg becomes black)
-     blend   → lighten makes the black bg invisible against dark page */
-  --signature-filter: invert(1) brightness(1.08);
-  --signature-blend: lighten;
+  --signature-filter: none;
+  --signature-blend: normal;
+  --signature-opacity: 0.95;
+  --theme-transition: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .light {
-  /* Warm editorial — cream, natural daylight, luxury paper.
-     No pure white. No cold blue tint. */
-  --bg-deep: oklch(0.950 0.018 80);    /* warm parchment — #F7F3EB */
-  --bg: oklch(0.960 0.016 82);         /* soft cream — #F7F3EB */
-  --surface: oklch(0.945 0.015 78);    /* warm linen — #F2ECE3 */
-  --elevated: oklch(0.975 0.012 80);   /* ivory card — #FFF9F3 */
-  --elevated-2: oklch(0.930 0.018 76); /* warm sand */
-  --border: oklch(0.86 0.020 70);      /* soft driftwood — #DED5C8 */
-  --border-strong: oklch(0.72 0.024 68);
-  --text: oklch(0.22 0.020 70);        /* warm charcoal — #22201C */
-  --text-muted: oklch(0.48 0.022 68);  /* warm stone — #6F675E */
-  --text-subtle: oklch(0.58 0.018 68); /* muted clay */
-  --accent: oklch(0.60 0.12 55);       /* burnished copper — #B67A4A */
-  --accent-soft: oklch(0.55 0.06 155); /* muted olive — #6B8B73 */
-  --glow: color-mix(in oklab, var(--accent) 6%, transparent);
-  --glow-strong: color-mix(in oklab, var(--accent) 12%, transparent);
-  --focus: oklch(0.60 0.12 55);
-  --danger: oklch(0.55 0.20 25);
-  --glass-bg: color-mix(in oklab, var(--surface) 78%, transparent);
-  --grain-opacity: 0.015;
+  /* Warm editorial — cream, luxury paper, natural daylight. */
+  --bg-deep: oklch(0.942 0.016 80);    /* warm parchment */
+  --bg:      oklch(0.956 0.014 82);    /* soft cream */
+  --surface: oklch(0.938 0.013 78);    /* warm linen */
+  --elevated: oklch(0.972 0.010 80);   /* ivory card */
+  --elevated-2: oklch(0.922 0.016 76); /* warm sand */
+  --border: oklch(0.845 0.018 70);     /* driftwood */
+  --border-strong: oklch(0.70 0.022 68);
+  --text: oklch(0.195 0.018 70);       /* deep warm charcoal */
+  --text-muted: oklch(0.455 0.020 68); /* warm stone */
+  --text-subtle: oklch(0.565 0.016 68);
+  --accent: oklch(0.575 0.115 50);     /* burnished copper */
+  --accent-soft: oklch(0.525 0.058 152);
+  --glow: color-mix(in oklab, var(--accent) 7%, transparent);
+  --glow-strong: color-mix(in oklab, var(--accent) 14%, transparent);
+  --focus: oklch(0.575 0.115 50);
+  --danger: oklch(0.54 0.20 25);
+  --glass-bg: color-mix(in oklab, var(--surface) 80%, transparent);
+  --grain-opacity: 0.012;
 
-  --shadow-flat: 0 1px 0 color-mix(in oklab, white 60%, transparent) inset;
+  --shadow-flat: 0 1px 0 color-mix(in oklab, white 65%, transparent) inset;
   --shadow-soft:
     0 1px 0 color-mix(in oklab, oklch(0.99 0.005 80) 80%, transparent) inset,
-    0 14px 34px -20px color-mix(in oklab, oklch(0.40 0.04 60) 14%, transparent),
-    0 2px 8px -4px color-mix(in oklab, oklch(0.40 0.04 60) 8%, transparent);
+    0 14px 34px -20px color-mix(in oklab, oklch(0.38 0.04 60) 12%, transparent),
+    0 2px 8px -4px color-mix(in oklab, oklch(0.38 0.04 60) 7%, transparent);
   --shadow-lift:
     0 1px 0 color-mix(in oklab, oklch(0.99 0.005 80) 80%, transparent) inset,
-    0 32px 70px -34px color-mix(in oklab, oklch(0.40 0.04 60) 16%, transparent),
-    0 10px 24px -12px color-mix(in oklab, oklch(0.40 0.04 60) 10%, transparent);
+    0 32px 70px -34px color-mix(in oklab, oklch(0.38 0.04 60) 14%, transparent),
+    0 10px 24px -12px color-mix(in oklab, oklch(0.38 0.04 60) 8%, transparent);
   --shadow-glow:
-    0 0 0 1px color-mix(in oklab, var(--accent) 20%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--accent) 22%, transparent),
     0 22px 60px -20px var(--glow-strong);
 
-  /* Signature asset: PNG has black ink on opaque white bg.
-     filter  → subtle contrast boost keeps ink crisp
-     blend   → multiply makes the white bg invisible against cream page */
-  --signature-filter: contrast(1.05);
-  --signature-blend: multiply;
+  --signature-filter: invert(1);
+  --signature-blend: normal;
+  --signature-opacity: 0.85;
+  --theme-transition: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 
 @layer base {
   *, *::before, *::after { border-color: var(--border); }
 
+  /* Issue #6: Smooth theme switching — interpolate ALL color properties */
   html {
     background-color: var(--bg-deep);
     color: var(--text);
@@ -157,11 +155,26 @@
     background:
       radial-gradient(1200px 800px at 85% -10%, var(--glow), transparent 60%),
       radial-gradient(900px 600px at -10% 110%, color-mix(in oklab, var(--accent-soft) 8%, transparent), transparent 60%),
+      radial-gradient(600px 400px at 50% 50%, color-mix(in oklab, var(--accent) 3%, transparent), transparent 70%),
       var(--bg);
     color: var(--text);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
     min-height: 100dvh;
+  }
+
+  /* Issue #6: Theme-switching transition — only fires during active switch (400ms window) */
+  /* ThemeProvider.tsx adds/removes .theme-switching class via JS on toggle */
+  .theme-switching *,
+  .theme-switching *::before,
+  .theme-switching *::after {
+    transition:
+      background 350ms cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 350ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 350ms cubic-bezier(0.4, 0, 0.2, 1),
+      color 350ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1),
+      fill 350ms cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 
   ::selection {
@@ -392,13 +405,13 @@
 
 @utility surface-lift {
   transition:
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 .surface-lift:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-lift),
     0 0 0 1px color-mix(in oklab, var(--accent) 18%, transparent);
   border-color: color-mix(in oklab, var(--accent) 30%, var(--border));
@@ -411,7 +424,7 @@
     0 2px 4px color-mix(in oklab, black 40%, transparent),
     0 30px 60px -20px color-mix(in oklab, black 60%, transparent),
     0 60px 120px -40px color-mix(in oklab, var(--accent) 22%, transparent);
-  transition: box-shadow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .portrait-frame:hover {
   box-shadow:
@@ -424,33 +437,33 @@
 
 @utility quick-pill {
   transition:
-    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .quick-pill:hover {
   transform: translateY(-1px);
   border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
   color: var(--text);
   box-shadow:
-    0 6px 20px -10px color-mix(in oklab, var(--accent) 40%, transparent),
+    0 4px 16px -8px color-mix(in oklab, var(--accent) 35%, transparent),
     inset 0 1px 0 color-mix(in oklab, white 10%, transparent);
 }
 
 @utility cta-primary {
   transition:
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .cta-primary:hover {
   transform: translateY(-2px);
   background-color: var(--accent);
   color: var(--text);
   box-shadow:
-    0 18px 40px -14px color-mix(in oklab, var(--accent) 60%, transparent),
+    0 14px 32px -10px color-mix(in oklab, var(--accent) 55%, transparent),
     inset 0 1px 0 color-mix(in oklab, white 20%, transparent);
 }
 

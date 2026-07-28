@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sun, Moon, Menu, X } from "lucide-react";
-import { useTheme } from "../../lib/theme";
+import { useTheme } from "../ThemeProvider";
 
 const links = [
   { href: "#work", label: "Work", id: "work" },
@@ -13,7 +13,7 @@ const links = [
 ];
 
 export function Nav() {
-  const { theme, toggle } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string>("");
   const [open, setOpen] = useState(false);
@@ -92,11 +92,12 @@ export function Nav() {
           <div className="flex-1 md:hidden" />
 
           <button
-            onClick={toggle}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-            className="p-2 rounded-full hover:bg-elevated/60 transition-colors text-text-muted hover:text-text"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            aria-label="Toggle theme"
+            className="relative w-8 h-8 rounded-full flex items-center justify-center hover:bg-elevated/60 transition-colors text-text-muted hover:text-text overflow-hidden"
           >
-            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <Sun className="w-4 h-4 absolute inset-auto transition-all duration-300 opacity-100 scale-100 dark:opacity-0 dark:scale-75" />
+            <Moon className="w-4 h-4 absolute inset-auto transition-all duration-300 opacity-0 scale-75 dark:opacity-100 dark:scale-100" />
           </button>
           <button
             className="md:hidden p-2 rounded-full hover:bg-elevated/60 text-text-muted hover:text-text"

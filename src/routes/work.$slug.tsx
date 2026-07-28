@@ -1,8 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ThemeProvider } from "../lib/theme";
 import { projects } from "../components/portfolio/data";
-import { projectImages } from "../components/portfolio/projectImages";
+import { projectImages } from "../components/portfolio/media";
 import { ArrowUpRight } from "lucide-react";
+import { GitHubWidget } from "../components/ui/GitHubWidget";
 
 export const Route = createFileRoute("/work/$slug")({
   loader: ({ params }) => {
@@ -33,16 +33,16 @@ export const Route = createFileRoute("/work/$slug")({
     };
   },
   notFoundComponent: () => (
-    <ThemeProvider>
+    <>
       <main className="min-h-screen grid place-items-center px-6 text-center">
         <div>
           <h1 className="text-display text-4xl mb-4">Case study not found.</h1>
           <Link to="/" className="text-accent hover:underline">
-            ← Back to work
+            ←  Back to work
           </Link>
         </div>
       </main>
-    </ThemeProvider>
+    </>
   ),
   component: CaseStudy,
 });
@@ -50,16 +50,20 @@ export const Route = createFileRoute("/work/$slug")({
 function CaseStudy() {
   const { project } = Route.useLoaderData();
   const heroImage = projectImages[project.slug];
+  
+  const currentIndex = projects.findIndex((p) => p.slug === project.slug);
+  const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
+  const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
 
   return (
-    <ThemeProvider>
+    <>
       <div className="grain-overlay" aria-hidden />
       <main className="min-h-screen px-6 md:px-16 lg:px-24 py-24 md:py-32 max-w-4xl mx-auto">
         <Link
           to="/"
           className="text-eyebrow inline-flex items-center gap-2 mb-16 hover:text-text transition-colors"
         >
-          ← Selected work
+          ← Selected work
         </Link>
 
         <div className="flex items-baseline gap-4 mb-6">
@@ -190,21 +194,29 @@ function CaseStudy() {
               href={project.liveDemo}
               target="_blank"
               rel="noreferrer"
-              className="quick-pill inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-4 py-2 text-[13px] text-text"
+              className="quick-pill inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-4 py-2 text-[13px] text-text mb-4"
             >
               Live demo <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
           )}
-          {project.github && (
+        </div>
+        
+        <div className="mb-8">
+          {project.githubRepo ? (
+            <GitHubWidget repoPath={project.githubRepo} />
+          ) : project.github ? (
             <a
               href={project.github}
               target="_blank"
               rel="noreferrer"
-              className="quick-pill inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-4 py-2 text-[13px] text-text-muted"
+              className="quick-pill inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-4 py-2 text-[13px] text-text-muted mb-4"
             >
               GitHub <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
-          )}
+          ) : null}
+        </div>
+        
+        <div className="flex flex-wrap gap-3">
           {project.links?.map((l: { label: string; href: string }) => (
             <a
               key={l.href}
@@ -217,8 +229,24 @@ function CaseStudy() {
             </a>
           ))}
         </div>
+
+        <div className="mt-32 pt-10 border-t border-border/40 flex items-center justify-between">
+          {prevProject ? (
+            <Link to="/work/$slug" params={{ slug: prevProject.slug }} className="group">
+              <div className="text-eyebrow text-text-muted mb-2 group-hover:text-text transition-colors">← Previous</div>
+              <div className="text-xl text-text">{prevProject.name}</div>
+            </Link>
+          ) : <div />}
+          
+          {nextProject ? (
+            <Link to="/work/$slug" params={{ slug: nextProject.slug }} className="group text-right">
+              <div className="text-eyebrow text-text-muted mb-2 group-hover:text-text transition-colors">Next →</div>
+              <div className="text-xl text-text">{nextProject.name}</div>
+            </Link>
+          ) : <div />}
+        </div>
       </main>
-    </ThemeProvider>
+    </>
   );
 }
 
@@ -230,4 +258,5 @@ function JournalField({ label, body }: { label: string; body: string }) {
     </div>
   );
 }
+
 

@@ -1,10 +1,11 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { projects, type Project } from "./data";
-import { projectImages } from "./projectImages";
-import { Reveal } from "./Reveal";
+import { projectImages } from "./media";
+import { Reveal } from "../ui/Reveal";
 import { SectionMark } from "./About";
+import { ImageWithSkeleton } from "../ui/ImageWithSkeleton";
 
 export function Work() {
   const featured = projects.filter((p) => p.featured);
@@ -171,25 +172,59 @@ function CaseStudyPreview({ project, reverse }: { project: Project; reverse: boo
  */
 function ScreenshotSlot({ project }: { project: Project }) {
   const heroImage = projectImages[project.slug];
+  const shouldReduceMotion = useReducedMotion();
+  const x = useMotionValue(0.5);
+  const y = useMotionValue(0.5);
+  
+  const springConfig = { stiffness: 400, damping: 30 };
+  const springX = useSpring(x, springConfig);
+  const springY = useSpring(y, springConfig);
+  
+  const rotateX = useTransform(springY, [0, 1], [4, -4]);
+  const rotateY = useTransform(springX, [0, 1], [-4, 4]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (shouldReduceMotion) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    x.set(mouseX / rect.width);
+    y.set(mouseY / rect.height);
+  };
+  
+  const handleMouseLeave = () => {
+    x.set(0.5);
+    y.set(0.5);
+  };
 
   return (
-    <div className="relative">
+    <div 
+      className="relative [perspective:1200px]"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
       <div
         aria-hidden
-        className="absolute -inset-6 rounded-[36px] opacity-40 group-hover:opacity-70 blur-2xl transition-opacity duration-700"
+        className="absolute -inset-6 rounded-[36px] opacity-40 group-hover:opacity-70 blur-2xl transition-opacity duration-700 pointer-events-none"
         style={{
           background:
             "radial-gradient(circle at 30% 20%, var(--glow-strong), transparent 60%)",
         }}
       />
-      <div className="relative aspect-[16/10] rounded-[28px] overflow-hidden soft-elevated transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] group-hover:shadow-[var(--shadow-lift)]">
+      <motion.div 
+        style={{
+          rotateX: shouldReduceMotion ? 0 : rotateX,
+          rotateY: shouldReduceMotion ? 0 : rotateY,
+        }}
+        className="relative aspect-[16/10] rounded-[28px] overflow-hidden soft-elevated transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:shadow-[var(--shadow-lift)] will-change-transform"
+      >
         {heroImage ? (
-          <img
+          <ImageWithSkeleton
             src={heroImage}
             alt={`${project.name} — project preview`}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105"
           />
         ) : (
           <>
@@ -215,7 +250,7 @@ function ScreenshotSlot({ project }: { project: Project }) {
             </div>
           </>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -261,3 +296,4 @@ function ArchiveRow({ project, index }: { project: Project; index: number }) {
     </motion.li>
   );
 }
+

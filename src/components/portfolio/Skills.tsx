@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { skillEcosystem, type SkillNode } from "./data";
-import { Reveal } from "./Reveal";
+import { Reveal } from "../ui/Reveal";
 import { SectionMark } from "./About";
 
 /**
@@ -144,10 +144,10 @@ export function Skills() {
                             key={node.name}
                             className="absolute left-0 top-0"
                             style={{
-                              transform: `rotate(${angle}deg) translate(${ring.radius}px, 0)`,
+                              transform: `rotate(${angle}deg) translate(${ring.radius}px, 0) translateZ(0)`,
                             }}
                           >
-                            <div style={{ transform: `rotate(${-angle}deg)` }}>
+                            <div style={{ transform: `rotate(${-angle}deg) translateZ(0)` }}>
                               <div
                                 style={{
                                   animation: `${ring.reverse ? "orbit-spin" : "orbit-spin-rev"} ${ring.duration}s linear infinite`,
@@ -157,6 +157,7 @@ export function Skills() {
                                 <div
                                   style={{
                                     animation: `node-float ${6 + (i % 4)}s ease-in-out ${(i * 0.35).toFixed(2)}s infinite`,
+                                    willChange: "transform",
                                   }}
                                 >
                                   <Capsule
@@ -413,3 +414,4 @@ function Capsule({
     </button>
   );
 }
+

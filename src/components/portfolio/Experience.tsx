@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { timeline } from "./data";
-import { Reveal } from "./Reveal";
+import { Reveal } from "../ui/Reveal";
 import { SectionMark } from "./About";
 
 /**
@@ -98,4 +98,5 @@ export function Experience() {
     </section>
   );
 }
+
 

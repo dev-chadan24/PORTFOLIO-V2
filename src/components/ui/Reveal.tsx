@@ -1,12 +1,13 @@
-import { motion, type MotionProps } from "framer-motion";
+import { motion, useReducedMotion, type MotionProps } from "framer-motion";
 import type { ReactNode } from "react";
 
+// Apple/Linear calibrated: small y, fast duration, no blur.
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Reveal({
   children,
   delay = 0,
-  y = 16,
+  y = 10,
   className,
   as: As = "div" as const,
   ...rest
@@ -17,13 +18,14 @@ export function Reveal({
   className?: string;
   as?: keyof HTMLElementTagNameMap;
 } & MotionProps) {
+  const reduced = useReducedMotion();
   const Cmp = motion[As as "div"] as typeof motion.div;
   return (
     <Cmp
-      initial={{ opacity: 0, y }}
+      initial={{ opacity: 0, y: reduced ? 0 : y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, delay, ease }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5, delay, ease }}
       className={className}
       {...rest}
     >
@@ -41,15 +43,16 @@ export function RevealLines({
   className?: string;
   delay?: number;
 }) {
+  const reduced = useReducedMotion();
   return (
     <span className={className}>
       {lines.map((line, i) => (
         <span key={i} className="block overflow-hidden">
           <motion.span
-            initial={{ y: "110%" }}
+            initial={{ y: reduced ? "0%" : "110%" }}
             whileInView={{ y: "0%" }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.9, delay: delay + i * 0.08, ease }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.65, delay: delay + i * 0.07, ease }}
             className="block"
           >
             {line}

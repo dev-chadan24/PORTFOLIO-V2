@@ -7,11 +7,13 @@
 import doseloopImg from "../../assets/Images/DOSELOOP.png";
 import harvestiqImg from "../../assets/Images/Harvest Iq.png";
 import expenseTrackerImg from "../../assets/Images/Expense Tracker.png";
+import tradeVaultImg from "../../assets/Images/Trade Vault.png";
 import profileVideo from "../../assets/Images/profile photo.mp4";
 import signatureImg from "../../assets/Images/Signature.png";
 
 /** Map project slugs to their hero artwork. */
 export const projectImages: Record<string, string> = {
+  tradevault: tradeVaultImg,
   doseloop: doseloopImg,
   harvestiq: harvestiqImg,
   "expense-tracker": expenseTrackerImg,

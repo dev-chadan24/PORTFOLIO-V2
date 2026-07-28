@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { ThemeProvider } from "../components/ThemeProvider";
 
 import appCss from "../styles.css?url";
 
@@ -108,6 +109,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
+        rel: "preload",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap",
+        as: "style",
+      },
+      {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap",
       },
@@ -127,15 +133,30 @@ function RootShell({ children }: { children: ReactNode }) {
     url: "https://chandanmahapatra.com",
     jobTitle: "Frontend Engineer",
     sameAs: [
-      "https://github.com/dev-chandan24",
+      "https://github.com/dev-chadan24",
       "https://www.linkedin.com/in/chandan-mahapatra"
     ]
   };
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const storedTheme = localStorage.getItem('ui-theme');
+                if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark', 'light');
+                  if (storedTheme === 'light') document.documentElement.classList.add('light');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
@@ -149,13 +170,20 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+import { ReactLenis } from "lenis/react";
+import { CommandPalette } from "../components/ui/CommandPalette";
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-    </QueryClientProvider>
+    <ReactLenis root options={{ lerp: 0.08, smoothWheel: true }}>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <CommandPalette />
+          <Outlet />
+        </QueryClientProvider>
+      </ThemeProvider>
+    </ReactLenis>
   );
 }
