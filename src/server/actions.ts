@@ -32,6 +32,8 @@ export const sendContactEmail = createServerFn({ method: "POST" })
       console.error("[Email Error]: RESEND_API_KEY is missing from process.env.");
       console.error("Diagnostic: Ensure RESEND_API_KEY is set in your .env file and restart the development server. Environment variables are not hot-reloaded.");
       throw new Error("Server configuration error: Email service is unavailable.");
+    } else {
+      console.log(`[Diagnostic] RESEND_API_KEY successfully loaded at runtime (starts with: ${process.env.RESEND_API_KEY.substring(0, 3)}...)`);
     }
 
     const resend = new Resend(process.env.RESEND_API_KEY);
