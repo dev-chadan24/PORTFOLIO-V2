@@ -8,10 +8,10 @@ import { t as QueryClient } from "../_libs/tanstack__query-core.mjs";
 import { t as ReactLenis } from "../_libs/lenis.mjs";
 import { o as motion, s as AnimatePresence } from "../_libs/framer-motion.mjs";
 import { a as Search, c as Mail, d as House, f as Github, m as FileText, n as User, o as Moon, r as Sun, u as Linkedin, w as ArrowRight, x as Briefcase } from "../_libs/lucide-react.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-C2FGQj5u.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-BOnGh5mw.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
-var styles_default = "/assets/styles-B-XOJVCn.css";
+var styles_default = "/assets/styles-BtL-jn4Q.css";
 function CommandPalette() {
 	const [open, setOpen] = (0, import_react.useState)(false);
 	const [query, setQuery] = (0, import_react.useState)("");
@@ -306,6 +306,18 @@ var Route$1 = createRootRouteWithContext()({
 		meta: [
 			{ charSet: "utf-8" },
 			{
+				httpEquiv: "Cache-Control",
+				content: "no-cache, no-store, must-revalidate"
+			},
+			{
+				httpEquiv: "Pragma",
+				content: "no-cache"
+			},
+			{
+				httpEquiv: "Expires",
+				content: "0"
+			},
+			{
 				name: "viewport",
 				content: "width=device-width, initial-scale=1"
 			},
@@ -460,7 +472,7 @@ function RootComponent() {
 		}) })
 	});
 }
-var $$splitComponentImporter = () => import("./routes-DsBkSXGB.mjs");
+var $$splitComponentImporter = () => import("./routes-kjaii8ok.mjs");
 var rootRouteChildren = {
 	IndexRoute: createFileRoute("/")({
 		head: () => ({ meta: [

@@ -10,7 +10,7 @@ import { C as ArrowUpRight, S as ArrowUp, T as ArrowDownRight, _ as Copy, b as C
 import { t as getServerFnById } from "../__23tanstack-start-server-fn-resolver-CIvIH4dQ.mjs";
 import { t as projectImages } from "./media-DxQncQ82.mjs";
 import { t as confetti_module_default } from "../_libs/canvas-confetti.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-DsBkSXGB.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-kjaii8ok.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var ease = [
@@ -2994,10 +2994,84 @@ function Colophon() {
 					]
 				},
 				className: "w-full flex flex-col items-center mb-20 md:mb-24",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-					className: "mb-8 font-mono text-xs tracking-[0.16em] uppercase opacity-[0.72] font-normal text-center",
-					style: { color: "var(--text)" },
-					children: "Chai. Code. Music. Repeat. ∞"
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "mb-8 flex flex-wrap justify-center items-center gap-x-[0.4rem] gap-y-1 font-mono text-[11px] sm:text-xs tracking-[0.2em] uppercase font-medium text-text-subtle",
+					children: [[
+						"Chai.",
+						"Code.",
+						"Music.",
+						"Repeat."
+					].map((word, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.span, {
+						initial: {
+							opacity: 0,
+							y: 4,
+							filter: "blur(2px)"
+						},
+						whileInView: {
+							opacity: 1,
+							y: 0,
+							filter: "blur(0px)"
+						},
+						viewport: {
+							once: true,
+							margin: "-50px"
+						},
+						transition: {
+							delay: .2 + i * .12,
+							duration: .6,
+							ease: [
+								.22,
+								1,
+								.36,
+								1
+							]
+						},
+						className: "hover:text-text transition-colors duration-500 cursor-default",
+						children: word
+					}, word)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.span, {
+						initial: {
+							opacity: 0,
+							scale: .5,
+							rotate: -45,
+							filter: "blur(2px)"
+						},
+						whileInView: {
+							opacity: 1,
+							scale: 1,
+							rotate: 0,
+							filter: "blur(0px)"
+						},
+						viewport: {
+							once: true,
+							margin: "-50px"
+						},
+						transition: {
+							delay: .6799999999999999,
+							duration: .7,
+							ease: [
+								.22,
+								1,
+								.36,
+								1
+							]
+						},
+						className: "ml-0.5 text-[14px] text-text inline-block",
+						style: { textShadow: "0 0 16px var(--accent)" },
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.span, {
+							animate: { opacity: [
+								.5,
+								1,
+								.5
+							] },
+							transition: {
+								duration: 4,
+								repeat: Infinity,
+								ease: "easeInOut"
+							},
+							className: "inline-block",
+							children: "∞"
+						})
+					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
 					whileHover: { y: -2 },
 					transition: {
@@ -3011,15 +3085,13 @@ function Colophon() {
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("iframe", {
 						"data-testid": "embed-iframe",
 						style: { borderRadius: "12px" },
-						src: "https://open.spotify.com/embed/track/6bdpj89aYEBjhpsenXAsmO?utm_source=generator&theme=0&si=3cf742fc2a0d435b",
+						src: "https://open.spotify.com/embed/track/6WlARP6h4CDVOcY386wW0W?utm_source=generator&si=8f163d58fa5844f7",
 						width: "100%",
 						height: "152",
-						frameBorder: "0",
-						allowFullScreen: false,
+						frameBorder: 0,
+						allowFullScreen: true,
 						allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
-						loading: "lazy",
-						title: "Spotify Embed: Track",
-						className: "block"
+						loading: "lazy"
 					})]
 				})]
 			}),

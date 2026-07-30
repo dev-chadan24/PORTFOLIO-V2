@@ -19,10 +19,37 @@ export function Colophon() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="w-full flex flex-col items-center mb-20 md:mb-24"
       >
-        {/* Premium Typography */}
-        <h3 className="mb-8 font-mono text-xs tracking-[0.16em] uppercase opacity-[0.72] font-normal text-center" style={{ color: "var(--text)" }}>
-          Chai. Code. Music. Repeat. ∞
-        </h3>
+        {/* Premium Typography Animation */}
+        <div className="mb-8 flex flex-wrap justify-center items-center gap-x-[0.4rem] gap-y-1 font-mono text-[11px] sm:text-xs tracking-[0.2em] uppercase font-medium text-text-subtle">
+          {["Chai.", "Code.", "Music.", "Repeat."].map((word, i) => (
+            <motion.span
+              key={word}
+              initial={{ opacity: 0, y: 4, filter: "blur(2px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: 0.2 + i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="hover:text-text transition-colors duration-500 cursor-default"
+            >
+              {word}
+            </motion.span>
+          ))}
+          <motion.span
+            initial={{ opacity: 0, scale: 0.5, rotate: -45, filter: "blur(2px)" }}
+            whileInView={{ opacity: 1, scale: 1, rotate: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: 0.2 + 4 * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="ml-0.5 text-[14px] text-text inline-block"
+            style={{ textShadow: "0 0 16px var(--accent)" }}
+          >
+            <motion.span
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="inline-block"
+            >
+              ∞
+            </motion.span>
+          </motion.span>
+        </div>
         
         {/* Custom Premium Player Container */}
         <motion.div 
@@ -35,16 +62,14 @@ export function Colophon() {
           
           <iframe 
             data-testid="embed-iframe"
-            style={{ borderRadius: "12px" }} 
-            src="https://open.spotify.com/embed/track/6bdpj89aYEBjhpsenXAsmO?utm_source=generator&theme=0&si=3cf742fc2a0d435b" 
+            style={{ borderRadius: "12px" }}
+            src="https://open.spotify.com/embed/track/6WlARP6h4CDVOcY386wW0W?utm_source=generator&si=8f163d58fa5844f7" 
             width="100%" 
             height="152" 
-            frameBorder="0" 
-            allowFullScreen={false} 
+            frameBorder={0}
+            allowFullScreen
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
             loading="lazy"
-            title="Spotify Embed: Track"
-            className="block"
           />
         </motion.div>
       </motion.div>
