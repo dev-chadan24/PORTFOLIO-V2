@@ -75,7 +75,14 @@
   --danger: oklch(0.64 0.22 25);
 
   --glass-bg: color-mix(in oklab, var(--surface) 52%, transparent);
+  --glass-blur: blur(24px) saturate(160%);
+  --glass-border-color: color-mix(in oklab, var(--border) 90%, transparent);
   --grain-opacity: 0.028;
+
+  /* Adaptive material tokens — defaults (universal) */
+  --mat-noise-opacity: 0;
+  --mat-specular-opacity: 0;
+  --mat-edge-light: color-mix(in oklab, white 8%, transparent);
 
   --shadow-flat: 0 1px 0 color-mix(in oklab, white 5%, transparent) inset;
   --shadow-soft:
@@ -93,7 +100,7 @@
   --signature-filter: none;
   --signature-blend: normal;
   --signature-opacity: 0.95;
-  --theme-transition: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-transition: 450ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .light {
@@ -115,7 +122,14 @@
   --focus: oklch(0.575 0.115 50);
   --danger: oklch(0.54 0.20 25);
   --glass-bg: color-mix(in oklab, var(--surface) 80%, transparent);
+  --glass-blur: blur(20px) saturate(180%);
+  --glass-border-color: color-mix(in oklab, var(--border) 60%, transparent);
   --grain-opacity: 0.012;
+
+  /* Adaptive material tokens — light defaults */
+  --mat-noise-opacity: 0;
+  --mat-specular-opacity: 0;
+  --mat-edge-light: color-mix(in oklab, white 50%, transparent);
 
   --shadow-flat: 0 1px 0 color-mix(in oklab, white 65%, transparent) inset;
   --shadow-soft:
@@ -130,10 +144,10 @@
     0 0 0 1px color-mix(in oklab, var(--accent) 22%, transparent),
     0 22px 60px -20px var(--glow-strong);
 
-  --signature-filter: invert(1);
-  --signature-blend: normal;
-  --signature-opacity: 0.85;
-  --theme-transition: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  --signature-filter: invert(1) brightness(0.85);
+  --signature-blend: multiply;
+  --signature-opacity: 0.75;
+  --theme-transition: 450ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 
@@ -153,9 +167,10 @@
 
   body {
     background:
-      radial-gradient(1200px 800px at 85% -10%, var(--glow), transparent 60%),
-      radial-gradient(900px 600px at -10% 110%, color-mix(in oklab, var(--accent-soft) 8%, transparent), transparent 60%),
-      radial-gradient(600px 400px at 50% 50%, color-mix(in oklab, var(--accent) 3%, transparent), transparent 70%),
+      radial-gradient(1400px 900px at 88% -8%, var(--glow), transparent 55%),
+      radial-gradient(1000px 700px at -8% 115%, color-mix(in oklab, var(--accent-soft) 10%, transparent), transparent 55%),
+      radial-gradient(700px 500px at 48% 52%, color-mix(in oklab, var(--accent) 4%, transparent), transparent 65%),
+      radial-gradient(500px 300px at 95% 85%, color-mix(in oklab, var(--accent-soft) 6%, transparent), transparent 70%),
       var(--bg);
     color: var(--text);
     font-family: var(--font-sans);
@@ -163,18 +178,19 @@
     min-height: 100dvh;
   }
 
-  /* Issue #6: Theme-switching transition — only fires during active switch (400ms window) */
+  /* Theme-switching transition — only fires during active switch (450ms window) */
   /* ThemeProvider.tsx adds/removes .theme-switching class via JS on toggle */
   .theme-switching *,
   .theme-switching *::before,
   .theme-switching *::after {
     transition:
-      background 350ms cubic-bezier(0.4, 0, 0.2, 1),
-      background-color 350ms cubic-bezier(0.4, 0, 0.2, 1),
-      border-color 350ms cubic-bezier(0.4, 0, 0.2, 1),
-      color 350ms cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1),
-      fill 350ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+      background 450ms cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 450ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 450ms cubic-bezier(0.4, 0, 0.2, 1),
+      color 450ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 450ms cubic-bezier(0.4, 0, 0.2, 1),
+      fill 450ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 450ms cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 
   ::selection {
@@ -270,6 +286,191 @@
 @media (prefers-reduced-motion: reduce) {
   .glass-nav::before { animation: none; }
 }
+
+/* ================================================================
+ * ADAPTIVE MATERIALS ENGINE
+ * Platform-aware glass and material adaptations.
+ * Targeting via data-platform attribute set by usePlatformDetect().
+ *
+ * Design rule: subtle adaptation, never theatrical.
+ * Each platform gets a material that feels native — not a parody.
+ * ================================================================ */
+
+/* ── iOS / iPadOS — Liquid Glass ────────────────────────────────
+ * Characteristic: heavy translucency, edge lighting, depth layers.
+ * Inspired by UIBlurEffect and the iOS 18 liquid glass spec.
+ * Strong backdrop blur, soft edge specular, tinted depth.
+ * ──────────────────────────────────────────────────────────────── */
+[data-platform="ios"] {
+  --glass-bg: color-mix(in oklab, var(--surface) 38%, transparent);
+  --glass-blur: blur(44px) saturate(210%);
+  --glass-border-color: color-mix(in oklab, white 16%, transparent);
+  --mat-edge-light: color-mix(in oklab, white 20%, transparent);
+}
+
+.light[data-platform="ios"],
+[data-platform="ios"] .light,
+[data-platform="ios"]:not(.dark) {
+  --glass-bg: color-mix(in oklab, var(--elevated) 72%, transparent);
+  --glass-blur: blur(36px) saturate(190%);
+}
+
+/* iOS liquid glass nav — richer layering */
+[data-platform="ios"] .glass-nav {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--surface) 54%, transparent) 0%,
+      color-mix(in oklab, var(--surface) 34%, transparent) 100%
+    );
+  backdrop-filter: var(--glass-blur);
+  border-color: var(--glass-border-color);
+  box-shadow:
+    0 1px 0 color-mix(in oklab, white 18%, transparent) inset,
+    0 -1px 0 color-mix(in oklab, black 10%, transparent) inset,
+    0 0 0 0.5px color-mix(in oklab, white 12%, transparent),
+    0 20px 50px -28px color-mix(in oklab, black 55%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--accent) 8%, transparent);
+}
+
+/* iOS glass cards — deeper translucency */
+[data-platform="ios"] .glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border-color: var(--glass-border-color);
+  box-shadow:
+    0 1px 0 var(--mat-edge-light) inset,
+    var(--shadow-soft);
+}
+
+/* ── macOS — Ultra-thin Precision Glass ─────────────────────────
+ * Characteristic: refined translucency, minimal reflections, crisp.
+ * NSVisualEffectView .hudWindow equivalent — legible, precise.
+ * ──────────────────────────────────────────────────────────────── */
+[data-platform="macos"] {
+  --glass-bg: color-mix(in oklab, var(--surface) 56%, transparent);
+  --glass-blur: blur(28px) saturate(175%);
+  --glass-border-color: color-mix(in oklab, var(--border) 75%, transparent);
+  --mat-edge-light: color-mix(in oklab, white 10%, transparent);
+}
+
+.light[data-platform="macos"],
+[data-platform="macos"]:not(.dark) {
+  --glass-bg: color-mix(in oklab, var(--elevated) 78%, transparent);
+  --glass-blur: blur(22px) saturate(165%);
+  --glass-border-color: color-mix(in oklab, var(--border) 55%, transparent);
+}
+
+[data-platform="macos"] .glass-nav {
+  backdrop-filter: var(--glass-blur);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--surface) 65%, transparent) 0%,
+      color-mix(in oklab, var(--surface) 45%, transparent) 100%
+    );
+}
+
+/* ── Windows 11 — Mica + Acrylic ───────────────────────────────
+ * Characteristic: noise texture (Mica), moderate blur, Fluent depth.
+ * Uses a subtle noise-like grain pattern via repeating-conic-gradient.
+ * ──────────────────────────────────────────────────────────────── */
+[data-platform="windows"] {
+  --glass-bg: color-mix(in oklab, var(--surface) 65%, transparent);
+  --glass-blur: blur(18px) saturate(140%);
+  --glass-border-color: color-mix(in oklab, var(--border) 80%, transparent);
+  --mat-noise-opacity: 0.035;
+  --mat-edge-light: color-mix(in oklab, white 6%, transparent);
+}
+
+.light[data-platform="windows"],
+[data-platform="windows"]:not(.dark) {
+  --glass-bg: color-mix(in oklab, var(--elevated) 82%, transparent);
+  --glass-blur: blur(14px) saturate(130%);
+  --mat-noise-opacity: 0.018;
+}
+
+/* Mica noise texture applied as pseudo-element on glass surfaces */
+[data-platform="windows"] .glass-nav::before {
+  background:
+    /* Simulated Mica noise — repeating micro-pattern */
+    repeating-conic-gradient(
+      oklch(0.9 0 0 / 0.04) 0% 25%,
+      transparent 0% 50%
+    ) 0 0 / 2px 2px,
+    /* Existing sheen */
+    conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      color-mix(in oklab, white 10%, transparent) 40deg,
+      transparent 90deg,
+      transparent 360deg
+    );
+  opacity: 0.1;
+  animation: glass-sheen 24s linear infinite;
+}
+
+[data-platform="windows"] .glass-nav {
+  backdrop-filter: var(--glass-blur);
+  border-radius: 12px; /* Windows 11 uses less aggressive rounding */
+}
+
+/* Windows Fluent shadow depth */
+[data-platform="windows"] .soft-elevated,
+[data-platform="windows"] .flat-card {
+  box-shadow:
+    0 2px 4px color-mix(in oklab, black 12%, transparent),
+    0 8px 16px -6px color-mix(in oklab, black 18%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--border) 60%, transparent);
+}
+
+/* ── Android — Material You ────────────────────────────────────
+ * Characteristic: tonal surfaces, organic depth, warm container fills.
+ * Avoids sharp glass — uses tonal elevation instead.
+ * ──────────────────────────────────────────────────────────────── */
+[data-platform="android"] {
+  --glass-bg: color-mix(in oklab, var(--surface) 75%, transparent);
+  --glass-blur: blur(16px) saturate(130%);
+  --glass-border-color: color-mix(in oklab, var(--border) 85%, transparent);
+  --mat-edge-light: transparent;
+}
+
+.light[data-platform="android"],
+[data-platform="android"]:not(.dark) {
+  --glass-bg: color-mix(in oklab, var(--elevated) 88%, transparent);
+}
+
+/* Material You tonal nav — less glass, more tonal elevation */
+[data-platform="android"] .glass-nav {
+  backdrop-filter: var(--glass-blur);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--elevated) 72%, transparent) 0%,
+      color-mix(in oklab, var(--surface) 60%, transparent) 100%
+    );
+  border-color: color-mix(in oklab, var(--accent) 8%, var(--border));
+  border-radius: 28px; /* Material 3 uses extraLargeShape = 28dp */
+}
+
+/* Material You card elevation */
+[data-platform="android"] .soft-elevated {
+  background: color-mix(in oklab, var(--elevated) 85%, var(--accent) 3%);
+  box-shadow:
+    0 1px 3px color-mix(in oklab, black 10%, transparent),
+    0 4px 8px -2px color-mix(in oklab, black 14%, transparent);
+}
+
+/* ── Accessibility: reduce glass complexity for performance ──── */
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .glass-nav,
+  .soft-elevated {
+    --glass-bg: var(--surface);
+    backdrop-filter: none;
+  }
+}
+
 
 /* Per-link liquid-glass pill inside the nav */
 .nav-liquid-item {
@@ -555,12 +756,17 @@
 @keyframes orbit-spin { to { transform: rotate(360deg); } }
 @keyframes orbit-spin-rev { to { transform: rotate(-360deg); } }
 @keyframes sun-breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.015); }
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.022); filter: brightness(1.05); }
 }
 @keyframes node-float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-3px); }
+  33% { transform: translateY(-2.5px); }
+  66% { transform: translateY(-1px); }
+}
+@keyframes intro-glow-pulse {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.20; }
 }
 
 @utility skill-capsule {
@@ -623,9 +829,39 @@
       0 16px 38px -18px color-mix(in oklab, var(--accent) 60%, transparent);
   }
 }
+
+/* ============ Accessibility — Focus indicators ============ */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Links and buttons get a tighter radius */
+a:focus-visible,
+button:focus-visible {
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Remove focus ring for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============ Accessibility — Reduced motion ============ */
 @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
   .back-to-top { animation: none; }
-  html { scroll-behavior: auto; }
+  .grain-overlay { display: none; }
 }
 
 @utility skill-sun {
@@ -647,4 +883,87 @@
     inset 0 -1px 0 color-mix(in oklab, black 14%, transparent),
     0 30px 60px -34px color-mix(in oklab, var(--accent) 40%, transparent),
     0 0 0 1px color-mix(in oklab, var(--accent) 12%, transparent);
+}
+
+/* ============ Theme toggle micro-animation ============ */
+@keyframes theme-toggle-spin {
+  0%   { transform: rotate(0deg) scale(1); }
+  40%  { transform: rotate(200deg) scale(0.85); }
+  70%  { transform: rotate(330deg) scale(1.08); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+.theme-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s;
+}
+
+.theme-toggle-spin {
+  animation: theme-toggle-spin 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ============ Progress indicator for research chart ============ */
+@keyframes chart-draw {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* ============ Section fade-up (subtle ambient) ============ */
+@keyframes section-ambient {
+  0%, 100% { opacity: 0.18; }
+  50% { opacity: 0.28; }
+}
+
+/* ============ Premium link underline ============ */
+@utility link-accent {
+  position: relative;
+  color: var(--accent);
+  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-accent::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-accent:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ============ CTA secondary (glass border) ============ */
+@utility cta-secondary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--surface) 50%, transparent);
+  backdrop-filter: blur(12px);
+  color: var(--text);
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cta-secondary:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  background: color-mix(in oklab, var(--elevated) 65%, transparent);
+  box-shadow:
+    0 8px 28px -12px color-mix(in oklab, var(--accent) 35%, transparent),
+    inset 0 1px 0 color-mix(in oklab, white 8%, transparent);
+}
+.cta-secondary:active {
+  transform: scale(0.97);
 }

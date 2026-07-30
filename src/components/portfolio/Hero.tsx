@@ -1,10 +1,10 @@
-import { motion, useMotionValue, useScroll, useSpring, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { Mail, Linkedin, Github, ArrowDownRight, Download } from "lucide-react";
 import { profile } from "./data";
 import { Portrait } from "./Portrait";
 import { profileVideo, signatureImg } from "./media";
-import { ease, useMagnetic } from "../../lib/motion";
+import { ease, useScrollDissolve, useMagnetic } from "../../lib/motion";
 
 /**
  * Hero — desktop pairs a text column with a portrait anchor.
@@ -28,7 +28,7 @@ export function Hero() {
     const handle = (e: MouseEvent | TouchEvent) => {
       const r = el.getBoundingClientRect();
       cancelAnimationFrame(raf);
-      
+
       let clientX, clientY;
       if ('touches' in e) {
         clientX = e.touches[0].clientX;
@@ -37,7 +37,7 @@ export function Hero() {
         clientX = e.clientX;
         clientY = e.clientY;
       }
-      
+
       raf = requestAnimationFrame(() => {
         mx.set(((clientX - r.left) / r.width) * 2 - 1);
         my.set(((clientY - r.top) / r.height) * 2 - 1);
@@ -52,13 +52,9 @@ export function Hero() {
     };
   }, [mx, my, shouldReduceMotion]);
 
-  // Scroll-based dissolve for the mobile portrait
-  const { scrollY } = useScroll();
-  const mobilePortraitOpacity = useTransform(scrollY, [0, 260, 480], [1, 0.6, 0]);
-  const mobilePortraitScale = useTransform(scrollY, [0, 480], [1, 0.92]);
-  const mobilePortraitBlur = useTransform(scrollY, [0, 480], [0, 8]);
-  const mobilePortraitFilter = useTransform(mobilePortraitBlur, (b) => `blur(${b}px)`);
-  const mobilePortraitY = useTransform(scrollY, [0, 480], [0, -24]);
+  // Scroll-based dissolve for the mobile portrait — uses shared hook
+  const { opacity: mobilePortraitOpacity, scale: mobilePortraitScale, filter: mobilePortraitFilter, y: mobilePortraitY } =
+    useScrollDissolve([0, 260, 480]);
 
   // Desktop portrait — subtle parallax that follows the cursor.
   const portraitX = useTransform(sx, [-1, 1], [-6, 6]);
@@ -98,9 +94,9 @@ export function Hero() {
         className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden"
         style={{ mixBlendMode: "var(--signature-blend)" as any }}
       >
-        <img 
-          src={signatureImg} 
-          alt="" 
+        <img
+          src={signatureImg}
+          alt=""
           className="w-[120vw] min-w-[800px] max-w-none select-none"
           style={{ filter: "var(--signature-filter)" }}
         />
@@ -113,7 +109,7 @@ export function Hero() {
           transition={{ delay: 0.1, duration: 0.55, ease }}
           className="text-eyebrow mb-10 md:mb-16"
         >
-          Developer · building products end to end
+          Frontend Engineer &amp; Product Designer
         </motion.p>
 
         {/* Mobile portrait — first thing users see, dissolves on scroll */}
@@ -204,6 +200,7 @@ export function Hero() {
       <div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-text-subtle hidden md:flex"
         style={{ animation: "breathe 5s ease-in-out infinite" }}
+        aria-hidden
       >
         <span className="text-eyebrow text-[0.62rem]">scroll</span>
         <span className="w-px h-8 bg-current opacity-60" />
@@ -219,16 +216,32 @@ function ResumeButton() {
     <a
       href={profile.resume}
       download
-      className="resume-cta group relative inline-flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2.5 rounded-full px-6 py-3 sm:py-[13px] border border-border/80 bg-surface/60 hover:bg-surface text-text hover:border-border transition-all duration-300 hover:scale-[1.02] active:scale-95"
+      className="resume-cta group relative inline-flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2.5 rounded-full px-6 py-3 sm:py-[13px] overflow-hidden"
+      style={{
+        border: "1px solid color-mix(in oklab, var(--border) 80%, transparent)",
+        background: "color-mix(in oklab, var(--surface) 55%, transparent)",
+        backdropFilter: "blur(14px) saturate(160%)",
+        color: "var(--text)",
+        boxShadow: "inset 0 1px 0 color-mix(in oklab, white 8%, transparent)",
+      }}
     >
+      {/* Subtle surface shimmer */}
+      <span
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(135deg, transparent 35%, color-mix(in oklab, white 4%, transparent) 50%, transparent 65%)",
+        }}
+      />
       <Download
-        style={{ width: 16, height: 16, flexShrink: 0 }}
-        className="text-text-muted group-hover:text-accent transition-colors duration-300"
+        style={{ width: 15, height: 15, flexShrink: 0 }}
+        className="relative z-10 text-text-muted group-hover:text-accent transition-colors duration-300"
         strokeWidth={2}
       />
       <span
+        className="relative z-10"
         style={{
-          fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif",
+          fontFamily: "var(--font-sans)",
           fontWeight: 500,
           fontSize: 14,
           letterSpacing: "-0.01em",
@@ -269,6 +282,7 @@ function QuickLink({
         className={`opacity-80 group-hover:opacity-100 transition-opacity ${
           primary ? "text-accent" : ""
         }`}
+        aria-hidden
       >
         {icon}
       </span>
@@ -299,4 +313,3 @@ function NameReveal({
     </span>
   );
 }
-

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Check, ArrowUpRight, Mail, Linkedin, Github, Loader2, AlertCircle } from "lucide-react";
 import { profile } from "./data";
 import { Reveal } from "../ui/Reveal";
-import { SectionMark } from "./About";
+import { SectionMark } from "../ui/SectionMark";
 import { sendContactEmail } from "../../server/actions";
 import { z } from "zod";
 import confetti from "canvas-confetti";
@@ -63,9 +63,7 @@ export function Contact() {
         throw new Error("Something went wrong");
       }
     } catch (err: any) {
-      if (err instanceof z.ZodError && err.errors && err.errors.length > 0) {
-        setErrorMessage(err.errors[0].message);
-      } else if (err?.issues && err.issues.length > 0) {
+      if (err instanceof z.ZodError && err.issues.length > 0) {
         setErrorMessage(err.issues[0].message);
       } else {
         setErrorMessage(err?.message || "Failed to send message. Please try again later.");
@@ -117,6 +115,8 @@ export function Contact() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ type: "spring", stiffness: 300, damping: 25 }}
                   className="flex flex-col items-center justify-center text-center py-16"
+                  role="status"
+                  aria-live="polite"
                 >
                   <motion.div 
                     initial={{ scale: 0 }}

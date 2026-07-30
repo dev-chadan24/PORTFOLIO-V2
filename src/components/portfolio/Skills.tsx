@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { skillEcosystem, type SkillNode } from "./data";
 import { Reveal } from "../ui/Reveal";
-import { SectionMark } from "./About";
+import { SectionMark } from "../ui/SectionMark";
 
 /**
  * Skills — a calm solar system.
@@ -89,11 +89,11 @@ export function Skills() {
                   "radial-gradient(circle at 50% 50%, var(--glow-strong) 0%, transparent 58%)",
               }}
             />
-            {/* concentric guide rings — decorative */}
+            {/* concentric guide rings — decorative, gives sense of orbital depth */}
             <svg
               aria-hidden
               viewBox="-450 -450 900 900"
-              className="absolute inset-0 w-full h-full opacity-[0.16]"
+              className="absolute inset-0 w-full h-full opacity-[0.26]"
               preserveAspectRatio="xMidYMid slice"
             >
               {rings.map((r, i) => (
@@ -104,7 +104,7 @@ export function Skills() {
                   r={r.radius}
                   fill="none"
                   stroke="var(--border-strong)"
-                  strokeWidth={0.6}
+                  strokeWidth={i === 0 ? 0.5 : 0.4}
                   strokeDasharray={i % 2 ? "1.5 8" : "1 12"}
                 />
               ))}
@@ -229,7 +229,7 @@ export function Skills() {
         {/* Sticky notebook */}
         <aside className="lg:col-span-4 hidden md:block">
           <div className="lg:sticky lg:top-28">
-            <div className="soft-elevated p-8 min-h-[280px] relative overflow-hidden">
+            <div className="soft-elevated p-8 min-h-[280px] relative overflow-hidden" aria-live="polite" aria-atomic="true">
               <div
                 aria-hidden
                 className="absolute -top-20 -right-20 w-56 h-56 rounded-full opacity-50"
@@ -266,14 +266,30 @@ export function Skills() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                     >
-                      <div className="text-display italic text-2xl md:text-3xl text-text-muted mb-4 leading-tight">
+                      <div
+                        className="text-display italic text-2xl md:text-3xl text-text-muted mb-5 leading-tight"
+                        style={{ letterSpacing: "-0.02em" }}
+                      >
                         Hover any capsule.
                       </div>
-                      <p className="text-[14px] text-text-subtle leading-relaxed">
-                        Every tool exists to help transform an idea into
-                        something you can actually open. Dots mark what I'm
-                        actively focused on.
+                      <p className="text-[14px] text-text-subtle leading-relaxed mb-4">
+                        Every tool on this map has been used on a real project —
+                        sometimes for years, sometimes for a single stubborn afternoon.
                       </p>
+                      <div
+                        className="flex items-center gap-2 pt-4"
+                        style={{
+                          borderTop: "1px solid color-mix(in oklab, var(--border) 50%, transparent)",
+                        }}
+                      >
+                        <span
+                          className="inline-block w-1.5 h-1.5 rounded-full"
+                          style={{ background: "var(--accent)", boxShadow: "0 0 6px var(--accent)" }}
+                        />
+                        <span className="text-[11px] text-text-subtle" style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}>
+                          Focus dots mark active tools
+                        </span>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>

@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import { projects } from "../components/portfolio/data";
 import { projectImages } from "../components/portfolio/media";
 import { ArrowUpRight } from "lucide-react";
@@ -58,12 +59,20 @@ function CaseStudy() {
   return (
     <>
       <div className="grain-overlay" aria-hidden />
-      <main className="min-h-screen px-6 md:px-16 lg:px-24 py-24 md:py-32 max-w-4xl mx-auto">
+      <motion.main
+        key={project.slug}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="min-h-screen px-6 md:px-16 lg:px-24 py-24 md:py-32 max-w-4xl mx-auto"
+      >
         <Link
           to="/"
-          className="text-eyebrow inline-flex items-center gap-2 mb-16 hover:text-text transition-colors"
+          className="group inline-flex items-center gap-2 mb-16 text-eyebrow text-text-muted hover:text-text transition-colors"
         >
-          ← Selected work
+          <span className="group-hover:-translate-x-1 transition-transform duration-300">←</span>
+          Selected work
         </Link>
 
         <div className="flex items-baseline gap-4 mb-6">
@@ -94,14 +103,17 @@ function CaseStudy() {
                 "radial-gradient(circle at 40% 30%, var(--glow-strong), transparent 60%)",
             }}
           />
-          <div className="relative rounded-[24px] overflow-hidden soft-elevated">
+          <div className="relative rounded-[24px] overflow-hidden soft-elevated group">
             {heroImage ? (
-              <img
+              <motion.img
+                initial={{ scale: 1.05 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                 src={heroImage}
                 alt={`${project.name} — project showcase`}
                 loading="eager"
                 decoding="async"
-                className="w-full h-auto object-cover"
+                className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
               />
             ) : (
               <div className="aspect-[16/9] relative">
@@ -130,13 +142,13 @@ function CaseStudy() {
           </div>
         </figure>
 
-        <div className="space-y-10 mb-14 max-w-2xl">
+        <div className="space-y-14 md:space-y-20 mb-20 max-w-2xl">
           {project.overview && <JournalField label="Overview" body={project.overview} />}
 
           {/* Key Learning — editorial quote */}
           {project.keyLearning && (
-            <div className="py-12 my-4">
-              <div className="text-eyebrow text-accent mb-8">Key Learning</div>
+            <div className="py-12 my-8 border-y border-border/30">
+              <div className="text-eyebrow text-accent mb-8 text-center">Key Learning</div>
               <blockquote className="max-w-xl mx-auto text-center">
                 <p className="text-display italic text-[clamp(1.5rem,2.8vw,2.25rem)] leading-[1.15] text-text mb-8">
                   "{project.keyLearning.quote}"
@@ -152,12 +164,12 @@ function CaseStudy() {
           {project.whyBuilt && <JournalField label="Why I built it" body={project.whyBuilt} />}
           {project.role && <JournalField label="My role" body={project.role} />}
           <div>
-            <div className="text-eyebrow text-accent mb-3">Technology used</div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="text-eyebrow text-accent mb-4">Technology used</div>
+            <div className="flex flex-wrap gap-2">
               {project.tech.map((t: string) => (
                 <span
                   key={t}
-                  className="text-[11px] font-mono px-2.5 py-1 rounded-full border border-border/80 bg-surface/60 text-text-muted"
+                  className="text-[11px] font-mono px-3 py-1.5 rounded-full border border-border/80 bg-surface/60 text-text-muted hover:border-accent/30 hover:text-text transition-colors cursor-default"
                 >
                   {t}
                 </span>
@@ -230,22 +242,28 @@ function CaseStudy() {
           ))}
         </div>
 
-        <div className="mt-32 pt-10 border-t border-border/40 flex items-center justify-between">
+        <div className="mt-40 pt-12 border-t border-border/40 grid grid-cols-2 gap-8">
           {prevProject ? (
-            <Link to="/work/$slug" params={{ slug: prevProject.slug }} className="group">
-              <div className="text-eyebrow text-text-muted mb-2 group-hover:text-text transition-colors">← Previous</div>
-              <div className="text-xl text-text">{prevProject.name}</div>
+            <Link to="/work/$slug" params={{ slug: prevProject.slug }} className="group block">
+              <div className="text-eyebrow text-text-muted mb-3 group-hover:text-accent transition-colors flex items-center gap-2">
+                <span className="group-hover:-translate-x-1 transition-transform duration-300">←</span>
+                Previous
+              </div>
+              <div className="text-2xl md:text-3xl text-text font-display group-hover:opacity-80 transition-opacity">{prevProject.name}</div>
             </Link>
           ) : <div />}
           
           {nextProject ? (
-            <Link to="/work/$slug" params={{ slug: nextProject.slug }} className="group text-right">
-              <div className="text-eyebrow text-text-muted mb-2 group-hover:text-text transition-colors">Next →</div>
-              <div className="text-xl text-text">{nextProject.name}</div>
+            <Link to="/work/$slug" params={{ slug: nextProject.slug }} className="group block text-right">
+              <div className="text-eyebrow text-text-muted mb-3 group-hover:text-accent transition-colors flex items-center justify-end gap-2">
+                Next
+                <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+              </div>
+              <div className="text-2xl md:text-3xl text-text font-display group-hover:opacity-80 transition-opacity">{nextProject.name}</div>
             </Link>
           ) : <div />}
         </div>
-      </main>
+      </motion.main>
     </>
   );
 }

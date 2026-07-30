@@ -46,17 +46,12 @@ export const snapshot: { label: string; items: string[] }[] = [
 ];
 
 
-export const nowPlaying = {
-  track: "Enna Sona",
-  artist: "Arijit Singh",
-  album: "OK Jaanu",
-  href: "https://open.spotify.com/",
-} as const;
 
 export interface TimelineEntry {
   year: string;
-  kind: "Project" | "Learning" | "Research Paper";
+  kind: "Internship" | "Project" | "Learning" | "Research Paper";
   title: string;
+  subtitle?: string;
   where?: string;
   note?: string;
   href?: string;
@@ -64,6 +59,14 @@ export interface TimelineEntry {
 
 // Experience — projects, internships, learning, research. One folded timeline.
 export const timeline: TimelineEntry[] = [
+  {
+    year: "June 2026 – Present",
+    kind: "Internship",
+    title: "Software Development & AI Intern",
+    where: "AssetMagnets",
+    subtitle: "Trade Vault — AI Stock Journal & Portfolio Platform",
+    note: "Working on a real product focused on stock tracking, AI-assisted journaling, portfolio management, and market analysis. Contributing across frontend development, product implementation, UI refinement, and AI workflow integration while collaborating in a production-oriented development environment.",
+  },
   {
     year: "2026",
     kind: "Project",

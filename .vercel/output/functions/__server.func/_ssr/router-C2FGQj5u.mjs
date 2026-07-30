@@ -1,17 +1,17 @@
 import { o as __toESM } from "../_runtime.mjs";
 import { _ as useRouter, c as HeadContent, d as Outlet, f as lazyRouteComponent, g as useNavigate, h as Link, m as createRootRouteWithContext, p as createFileRoute, s as Scripts, u as createRouter } from "../_libs/@tanstack/react-router+[...].mjs";
 import { n as require_jsx_runtime, r as require_react, t as QueryClientProvider } from "../_libs/react+tanstack__react-query.mjs";
-import { n as useTheme, t as ThemeProvider } from "./ThemeProvider-CnfSX_O2.mjs";
-import { n as profile } from "./data-BmBBJa8h.mjs";
-import { t as Route } from "./work._slug-gv4IlCfX.mjs";
+import { n as useTheme, t as ThemeProvider } from "./ThemeProvider-yVDAGyHN.mjs";
+import { t as profile } from "./data-BJmZkLQi.mjs";
+import { t as Route } from "./work._slug-BEhfsRFq.mjs";
 import { t as QueryClient } from "../_libs/tanstack__query-core.mjs";
 import { t as ReactLenis } from "../_libs/lenis.mjs";
 import { o as motion, s as AnimatePresence } from "../_libs/framer-motion.mjs";
 import { a as Search, c as Mail, d as House, f as Github, m as FileText, n as User, o as Moon, r as Sun, u as Linkedin, w as ArrowRight, x as Briefcase } from "../_libs/lucide-react.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-DijxiXqU.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-C2FGQj5u.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
-var styles_default = "/assets/styles-Dyz5mb6V.css";
+var styles_default = "/assets/styles-B-XOJVCn.css";
 function CommandPalette() {
 	const [open, setOpen] = (0, import_react.useState)(false);
 	const [query, setQuery] = (0, import_react.useState)("");
@@ -199,30 +199,67 @@ function CommandPalette() {
 		})]
 	}) });
 }
+/**
+* usePlatformDetect — detects the user's OS/platform and applies
+* a `data-platform` attribute to the document root for CSS targeting.
+*
+* Design principle: Subtle adaptation, not OS parody.
+* The platform signal drives material refinements — glass quality,
+* blur amount, noise texture — not layout or content changes.
+*/
+function detectPlatform() {
+	if (typeof navigator === "undefined") return "unknown";
+	const ua = navigator.userAgent;
+	const platform = navigator.userAgentData?.platform?.toLowerCase() ?? "";
+	if (/iphone|ipad|ipod/i.test(ua)) return "ios";
+	if (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1) return "ios";
+	if (/macintosh|mac os x/i.test(ua) && navigator.maxTouchPoints <= 1) return "macos";
+	if (platform === "macos") return "macos";
+	if (/win/i.test(platform)) return "windows";
+	if (/windows nt/i.test(ua)) return "windows";
+	if (/android/i.test(ua)) return "android";
+	if (/linux/i.test(ua)) return "linux";
+	return "unknown";
+}
+/**
+* Hook: apply data-platform to <html> for CSS-level adaptation.
+* Should be called once at the root layout level.
+*/
+function usePlatformDetect() {
+	const platform = detectPlatform();
+	(0, import_react.useEffect)(() => {
+		document.documentElement.setAttribute("data-platform", platform);
+		return () => {};
+	}, [platform]);
+	return platform;
+}
 function NotFoundComponent() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "flex min-h-screen items-center justify-center bg-background px-4",
+		className: "flex min-h-screen items-center justify-center px-6",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "max-w-md text-center",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-					className: "text-7xl font-bold text-foreground",
+					className: "text-display text-[clamp(4rem,12vw,8rem)] leading-none text-text-muted",
 					children: "404"
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-					className: "mt-4 text-xl font-semibold text-foreground",
+					className: "mt-4 text-display text-xl text-text",
 					children: "Page not found"
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "mt-2 text-sm text-muted-foreground",
+					className: "mt-3 text-[15px] text-text-muted leading-relaxed",
 					children: "The page you're looking for doesn't exist or has been moved."
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "mt-6",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+					className: "mt-8",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
 						to: "/",
-						className: "inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90",
-						children: "Go home"
+						className: "cta-primary inline-flex items-center gap-3 rounded-full pl-5 pr-2 py-2 text-sm bg-text text-bg",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Go home" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "grid place-items-center w-8 h-8 rounded-full bg-bg/15",
+							children: "←"
+						})]
 					})
 				})
 			]
@@ -233,30 +270,30 @@ function ErrorComponent({ error, reset }) {
 	console.error(error);
 	const router = useRouter();
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "flex min-h-screen items-center justify-center bg-background px-4",
+		className: "flex min-h-screen items-center justify-center px-6",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "max-w-md text-center",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-					className: "text-xl font-semibold tracking-tight text-foreground",
+					className: "text-display text-xl text-text",
 					children: "This page didn't load"
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "mt-2 text-sm text-muted-foreground",
+					className: "mt-3 text-[15px] text-text-muted leading-relaxed",
 					children: "Something went wrong on our end. You can try refreshing or head back home."
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "mt-6 flex flex-wrap justify-center gap-2",
+					className: "mt-8 flex flex-wrap justify-center gap-3",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 						onClick: () => {
 							router.invalidate();
 							reset();
 						},
-						className: "inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90",
+						className: "cta-primary inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm bg-text text-bg",
 						children: "Try again"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
 						href: "/",
-						className: "inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent",
+						className: "inline-flex items-center justify-center rounded-full border border-border px-5 py-2.5 text-sm text-text-muted hover:text-text hover:border-border-strong transition-colors",
 						children: "Go home"
 					})]
 				})
@@ -390,11 +427,19 @@ function RootShell({ children }) {
 				type: "application/ld+json",
 				dangerouslySetInnerHTML: { __html: JSON.stringify({
 					"@context": "https://schema.org",
-					"@type": "Person",
-					name: "Chandan Mahapatra",
-					url: "https://chandanmahapatra.com",
-					jobTitle: "Frontend Engineer",
-					sameAs: ["https://github.com/dev-chadan24", "https://www.linkedin.com/in/chandan-mahapatra"]
+					"@graph": [{
+						"@type": "Person",
+						name: "Chandan Mahapatra",
+						url: "https://chandanmahapatra.com",
+						jobTitle: "Frontend Engineer & Product Designer",
+						description: "Product-minded frontend engineer from Odisha, India. Building the parts of software people actually touch.",
+						sameAs: ["https://github.com/dev-chadan24", "https://www.linkedin.com/in/chandan-mahapatra"]
+					}, {
+						"@type": "WebSite",
+						name: "Chandan Mahapatra — Portfolio",
+						url: "https://chandanmahapatra.com",
+						description: "Selected work, research papers, and notes on the craft of frontend engineering."
+					}]
 				}) }
 			})
 		] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("body", { children: [children, /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Scripts, {})] })]
@@ -402,6 +447,7 @@ function RootShell({ children }) {
 }
 function RootComponent() {
 	const { queryClient } = Route$1.useRouteContext();
+	usePlatformDetect();
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ReactLenis, {
 		root: true,
 		options: {
@@ -414,7 +460,7 @@ function RootComponent() {
 		}) })
 	});
 }
-var $$splitComponentImporter = () => import("./routes-B3_9X4em.mjs");
+var $$splitComponentImporter = () => import("./routes-DsBkSXGB.mjs");
 var rootRouteChildren = {
 	IndexRoute: createFileRoute("/")({
 		head: () => ({ meta: [

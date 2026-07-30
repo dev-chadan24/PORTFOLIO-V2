@@ -1,6 +1,6 @@
 import { o as __toESM } from "../_runtime.mjs";
 import { n as require_jsx_runtime, r as require_react } from "../_libs/react+tanstack__react-query.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/ThemeProvider-CnfSX_O2.js
+//#region node_modules/.nitro/vite/services/ssr/assets/ThemeProvider-yVDAGyHN.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var ThemeProviderContext = (0, import_react.createContext)({
@@ -13,7 +13,11 @@ var ThemeProviderContext = (0, import_react.createContext)({
 * color interpolation without polluting every element with transitions.
 */
 function ThemeProvider({ children, defaultTheme = "system", storageKey = "ui-theme" }) {
-	const [theme, setThemeState] = (0, import_react.useState)(() => (typeof window !== "undefined" ? localStorage.getItem(storageKey) : null) || defaultTheme);
+	const [theme, setThemeState] = (0, import_react.useState)(defaultTheme);
+	(0, import_react.useEffect)(() => {
+		const resolved = localStorage.getItem(storageKey) || defaultTheme;
+		setThemeState(resolved);
+	}, [storageKey, defaultTheme]);
 	(0, import_react.useEffect)(() => {
 		const root = window.document.documentElement;
 		root.classList.remove("light", "dark");
@@ -27,11 +31,11 @@ function ThemeProvider({ children, defaultTheme = "system", storageKey = "ui-the
 	const setTheme = (newTheme) => {
 		const root = document.documentElement;
 		root.classList.add("theme-switching");
-		const timer = setTimeout(() => {
-			root.classList.remove("theme-switching");
-		}, 400);
 		localStorage.setItem(storageKey, newTheme);
 		setThemeState(newTheme);
+		const timer = setTimeout(() => {
+			root.classList.remove("theme-switching");
+		}, 500);
 		return () => clearTimeout(timer);
 	};
 	const value = {

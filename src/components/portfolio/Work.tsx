@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { projects, type Project } from "./data";
 import { projectImages } from "./media";
 import { Reveal } from "../ui/Reveal";
-import { SectionMark } from "./About";
+import { SectionMark } from "../ui/SectionMark";
 import { ImageWithSkeleton } from "../ui/ImageWithSkeleton";
 
 export function Work() {

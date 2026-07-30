@@ -30,12 +30,16 @@ export function ThemeProvider({
   defaultTheme = "system",
   storageKey = "ui-theme",
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(
-    () =>
-      (typeof window !== "undefined"
-        ? (localStorage.getItem(storageKey) as Theme)
-        : null) || defaultTheme
-  );
+  // Phase 1: Always start with defaultTheme (SSR + client both use "system")
+  // This guarantees identical HTML on server and client, eliminating hydration mismatch.
+  const [theme, setThemeState] = useState<Theme>(defaultTheme);
+
+  useEffect(() => {
+    // Phase 2: After hydration, read stored preference and apply
+    const stored = localStorage.getItem(storageKey) as Theme | null;
+    const resolved = stored || defaultTheme;
+    setThemeState(resolved);
+  }, [storageKey, defaultTheme]);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -57,16 +61,18 @@ export function ThemeProvider({
     // Enable smooth transitions for all elements during the switch
     const root = document.documentElement;
     root.classList.add("theme-switching");
-    // Remove the transitioning class after the transition completes
-    const timer = setTimeout(() => {
-      root.classList.remove("theme-switching");
-    }, 400);
 
     localStorage.setItem(storageKey, newTheme);
     setThemeState(newTheme);
 
+    // Remove the transitioning class after 500ms (luxury feel)
+    const timer = setTimeout(() => {
+      root.classList.remove("theme-switching");
+    }, 500);
+
     return () => clearTimeout(timer);
   };
+
 
   const value = {
     theme,

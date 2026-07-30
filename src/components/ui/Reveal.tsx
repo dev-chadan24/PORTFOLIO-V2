@@ -1,8 +1,6 @@
 import { motion, useReducedMotion, type MotionProps } from "framer-motion";
 import type { ReactNode } from "react";
-
-// Apple/Linear calibrated: small y, fast duration, no blur.
-const ease = [0.22, 1, 0.36, 1] as const;
+import { easeEmphasized } from "../../lib/motion";
 
 export function Reveal({
   children,
@@ -25,7 +23,7 @@ export function Reveal({
       initial={{ opacity: 0, y: reduced ? 0 : y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, delay, ease }}
+      transition={{ duration: 0.5, delay, ease: easeEmphasized }}
       className={className}
       {...rest}
     >
@@ -52,7 +50,7 @@ export function RevealLines({
             initial={{ y: reduced ? "0%" : "110%" }}
             whileInView={{ y: "0%" }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.65, delay: delay + i * 0.07, ease }}
+            transition={{ duration: 0.65, delay: delay + i * 0.07, ease: easeEmphasized }}
             className="block"
           >
             {line}

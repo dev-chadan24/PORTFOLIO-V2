@@ -1,8 +1,8 @@
 // Centralized motion vocabulary — Linear/Apple/Raycast calibration.
 // Philosophy: fast reveal, zero blur, spring-like easing, small vertical travel.
 
-import { useEffect, type RefObject } from "react";
-import { useMotionValue, useSpring, useReducedMotion, type MotionValue } from "framer-motion";
+import { useEffect, useCallback, useState, type RefObject } from "react";
+import { useMotionValue, useSpring, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 
 // Primary easing: fast-start, smooth arrival. Matches iOS spring character.
 export const ease = [0.25, 0.1, 0.25, 1] as const;
@@ -96,4 +96,47 @@ export function useMagnetic(
   }, [ref, strength, reduced, x, y]);
 
   return { x: sx, y: sy };
+}
+
+/**
+ * useScrollDissolve — scroll-driven opacity/scale/blur for hero elements.
+ * Respects prefers-reduced-motion.
+ */
+export function useScrollDissolve(inputRange: [number, number, number]) {
+  const { scrollY } = useScroll();
+  const opacity = useTransform(scrollY, inputRange, [1, 0.6, 0]);
+  const scale = useTransform(scrollY, [inputRange[0], inputRange[2]], [1, 0.92]);
+  const blurPx = useTransform(scrollY, [inputRange[0], inputRange[2]], [0, 8]);
+  const filter = useTransform(blurPx, (b) => `blur(${b}px)`);
+  const y = useTransform(scrollY, [inputRange[0], inputRange[2]], [0, -24]);
+  return { opacity, scale, filter, y };
+}
+
+/**
+ * useActiveSection — IntersectionObserver-based active section tracker.
+ * Respects the nav's rootMargin convention: fires when section crosses 45% viewport center.
+ */
+export function useActiveSection(
+  ids: string[],
+  rootMargin = "-45% 0px -50% 0px",
+): string {
+  const [active, setActive] = useState("");
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id);
+        });
+      },
+      { rootMargin, threshold: 0 },
+    );
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, [ids, rootMargin]);
+
+  return active;
 }

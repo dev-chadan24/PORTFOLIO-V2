@@ -1,4 +1,4 @@
-//#region node_modules/.nitro/vite/services/ssr/assets/data-BmBBJa8h.js
+//#region node_modules/.nitro/vite/services/ssr/assets/data-BJmZkLQi.js
 var profile = {
 	name: "Chandan Mahapatra",
 	location: "Jeypore, Odisha · India",
@@ -57,13 +57,15 @@ var snapshot = [
 		items: ["Jeypore, Odisha", "Open to Remote Opportunities"]
 	}
 ];
-var nowPlaying = {
-	track: "Enna Sona",
-	artist: "Arijit Singh",
-	album: "OK Jaanu",
-	href: "https://open.spotify.com/"
-};
 var timeline = [
+	{
+		year: "June 2026 – Present",
+		kind: "Internship",
+		title: "Software Development & AI Intern",
+		where: "AssetMagnets",
+		subtitle: "Trade Vault — AI Stock Journal & Portfolio Platform",
+		note: "Working on a real product focused on stock tracking, AI-assisted journaling, portfolio management, and market analysis. Contributing across frontend development, product implementation, UI refinement, and AI workflow integration while collaborating in a production-oriented development environment."
+	},
 	{
 		year: "2026",
 		kind: "Project",
@@ -464,4 +466,4 @@ var skillEcosystem = [
 	}
 ];
 //#endregion
-export { skillEcosystem as a, research as i, profile as n, snapshot as o, projects as r, timeline as s, nowPlaying as t };
+export { snapshot as a, skillEcosystem as i, projects as n, timeline as o, research as r, profile as t };

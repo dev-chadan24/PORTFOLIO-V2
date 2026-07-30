@@ -45,7 +45,7 @@ export const sendContactEmail = createServerFn({ method: "POST" })
           from: "Portfolio Contact <onboarding@resend.dev>",
           to: ["cmahapatra2400@gmail.com"], // Must be updated to verified domain in production if not using resend.dev test domain
           subject: `New contact from ${name}`,
-          reply_to: email,
+          replyTo: email,
           html: `<p><strong>Name:</strong> ${name}</p>
 <p><strong>Email:</strong> ${email}</p>
 <p><strong>Timestamp:</strong> ${timestamp}</p>

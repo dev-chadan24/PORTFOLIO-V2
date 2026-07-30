@@ -1,7 +1,7 @@
 import { c as createServerFn, i as TSS_SERVER_FUNCTION } from "./createServerFn-CIHAFgYl.mjs";
 import { n as string, t as object } from "../_libs/zod.mjs";
 import { t as Resend } from "../_libs/resend+standardwebhooks.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/actions-B4LFsidM.js
+//#region node_modules/.nitro/vite/services/ssr/assets/actions-ovFf-qQJ.js
 var createServerRpc = (serverFnMeta, splitImportFn) => {
 	const url = "/_serverFn/" + serverFnMeta.id;
 	return Object.assign(splitImportFn, {
@@ -10,7 +10,6 @@ var createServerRpc = (serverFnMeta, splitImportFn) => {
 		[TSS_SERVER_FUNCTION]: true
 	});
 };
-var resend = new Resend(process.env.RESEND_API_KEY || "re_dummy");
 var rateLimitCache = /* @__PURE__ */ new Map();
 var sendContactEmail_createServerFn_handler = createServerRpc({
 	id: "9f6a3e7d862b3bd44a62bd3da8650b9f5c1c8e066f55c724a9b197b7a20914a6",
@@ -29,14 +28,19 @@ var sendContactEmail = createServerFn({ method: "POST" }).validator((data) => {
 	if (honeypot && honeypot.length > 0) return { success: true };
 	const now = Date.now();
 	if (now - (rateLimitCache.get(email) || 0) < 6e4) throw new Error("You're sending emails too fast. Please wait a minute.");
-	if (!process.env.RESEND_API_KEY) throw new Error("Resend API key is not configured.");
+	if (!process.env.RESEND_API_KEY) {
+		console.error("[Email Error]: RESEND_API_KEY is missing from process.env.");
+		console.error("Diagnostic: Ensure RESEND_API_KEY is set in your .env file and restart the development server. Environment variables are not hot-reloaded.");
+		throw new Error("Server configuration error: Email service is unavailable.");
+	} else console.log(`[Diagnostic] RESEND_API_KEY successfully loaded at runtime (starts with: ${process.env.RESEND_API_KEY.substring(0, 3)}...)`);
+	const resend = new Resend(process.env.RESEND_API_KEY);
 	try {
 		const timestamp = (/* @__PURE__ */ new Date()).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 		const { data, error } = await resend.batch.send([{
 			from: "Portfolio Contact <onboarding@resend.dev>",
 			to: ["cmahapatra2400@gmail.com"],
 			subject: `New contact from ${name}`,
-			reply_to: email,
+			replyTo: email,
 			html: `<p><strong>Name:</strong> ${name}</p>
 <p><strong>Email:</strong> ${email}</p>
 <p><strong>Timestamp:</strong> ${timestamp}</p>

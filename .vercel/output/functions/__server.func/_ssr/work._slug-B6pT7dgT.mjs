@@ -1,11 +1,12 @@
 import { o as __toESM } from "../_runtime.mjs";
 import { h as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { n as require_jsx_runtime, r as require_react } from "../_libs/react+tanstack__react-query.mjs";
-import { r as projects } from "./data-BmBBJa8h.mjs";
-import { t as Route } from "./work._slug-gv4IlCfX.mjs";
+import { n as projects } from "./data-BJmZkLQi.mjs";
+import { t as Route } from "./work._slug-BEhfsRFq.mjs";
+import { o as motion } from "../_libs/framer-motion.mjs";
 import { C as ArrowUpRight, f as Github, h as ExternalLink, i as Star, p as GitFork, v as Clock } from "../_libs/lucide-react.mjs";
 import { t as projectImages } from "./media-DxQncQ82.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/work._slug-BGPPpLZc.js
+//#region node_modules/.nitro/vite/services/ssr/assets/work._slug-B6pT7dgT.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function GitHubWidget({ repoPath }) {
@@ -92,13 +93,37 @@ function CaseStudy() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		className: "grain-overlay",
 		"aria-hidden": true
-	}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", {
+	}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.main, {
+		initial: {
+			opacity: 0,
+			y: 20
+		},
+		animate: {
+			opacity: 1,
+			y: 0
+		},
+		exit: {
+			opacity: 0,
+			y: -20
+		},
+		transition: {
+			duration: .6,
+			ease: [
+				.22,
+				1,
+				.36,
+				1
+			]
+		},
 		className: "min-h-screen px-6 md:px-16 lg:px-24 py-24 md:py-32 max-w-4xl mx-auto",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
 				to: "/",
-				className: "text-eyebrow inline-flex items-center gap-2 mb-16 hover:text-text transition-colors",
-				children: "← Selected work"
+				className: "group inline-flex items-center gap-2 mb-16 text-eyebrow text-text-muted hover:text-text transition-colors",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					className: "group-hover:-translate-x-1 transition-transform duration-300",
+					children: "←"
+				}), "Selected work"]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "flex items-baseline gap-4 mb-6",
@@ -131,13 +156,24 @@ function CaseStudy() {
 					className: "absolute -inset-4 rounded-[36px] opacity-30 blur-2xl pointer-events-none",
 					style: { background: "radial-gradient(circle at 40% 30%, var(--glow-strong), transparent 60%)" }
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "relative rounded-[24px] overflow-hidden soft-elevated",
-					children: heroImage ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+					className: "relative rounded-[24px] overflow-hidden soft-elevated group",
+					children: heroImage ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.img, {
+						initial: { scale: 1.05 },
+						animate: { scale: 1 },
+						transition: {
+							duration: 1.2,
+							ease: [
+								.22,
+								1,
+								.36,
+								1
+							]
+						},
 						src: heroImage,
 						alt: `${project.name} — project showcase`,
 						loading: "eager",
 						decoding: "async",
-						className: "w-full h-auto object-cover"
+						className: "w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
 					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "aspect-[16/9] relative",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -161,16 +197,16 @@ function CaseStudy() {
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "space-y-10 mb-14 max-w-2xl",
+				className: "space-y-14 md:space-y-20 mb-20 max-w-2xl",
 				children: [
 					project.overview && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(JournalField, {
 						label: "Overview",
 						body: project.overview
 					}),
 					project.keyLearning && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "py-12 my-4",
+						className: "py-12 my-8 border-y border-border/30",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "text-eyebrow text-accent mb-8",
+							className: "text-eyebrow text-accent mb-8 text-center",
 							children: "Key Learning"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("blockquote", {
 							className: "max-w-xl mx-auto text-center",
@@ -200,12 +236,12 @@ function CaseStudy() {
 						body: project.role
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "text-eyebrow text-accent mb-3",
+						className: "text-eyebrow text-accent mb-4",
 						children: "Technology used"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "flex flex-wrap gap-1.5",
+						className: "flex flex-wrap gap-2",
 						children: project.tech.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[11px] font-mono px-2.5 py-1 rounded-full border border-border/80 bg-surface/60 text-text-muted",
+							className: "text-[11px] font-mono px-3 py-1.5 rounded-full border border-border/80 bg-surface/60 text-text-muted hover:border-accent/30 hover:text-text transition-colors cursor-default",
 							children: t
 						}, t))
 					})] }),
@@ -282,33 +318,39 @@ function CaseStudy() {
 				}, l.href))
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "mt-32 pt-10 border-t border-border/40 flex items-center justify-between",
+				className: "mt-40 pt-12 border-t border-border/40 grid grid-cols-2 gap-8",
 				children: [prevProject ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
 					to: "/work/$slug",
 					params: { slug: prevProject.slug },
-					className: "group",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "text-eyebrow text-text-muted mb-2 group-hover:text-text transition-colors",
-						children: "← Previous"
+					className: "group block",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "text-eyebrow text-text-muted mb-3 group-hover:text-accent transition-colors flex items-center gap-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "group-hover:-translate-x-1 transition-transform duration-300",
+							children: "←"
+						}), "Previous"]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "text-xl text-text",
+						className: "text-2xl md:text-3xl text-text font-display group-hover:opacity-80 transition-opacity",
 						children: prevProject.name
 					})]
 				}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {}), nextProject ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
 					to: "/work/$slug",
 					params: { slug: nextProject.slug },
-					className: "group text-right",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "text-eyebrow text-text-muted mb-2 group-hover:text-text transition-colors",
-						children: "Next →"
+					className: "group block text-right",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "text-eyebrow text-text-muted mb-3 group-hover:text-accent transition-colors flex items-center justify-end gap-2",
+						children: ["Next", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "group-hover:translate-x-1 transition-transform duration-300",
+							children: "→"
+						})]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "text-xl text-text",
+						className: "text-2xl md:text-3xl text-text font-display group-hover:opacity-80 transition-opacity",
 						children: nextProject.name
 					})]
 				}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {})]
 			})
 		]
-	})] });
+	}, project.slug)] });
 }
 function JournalField({ label, body }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {

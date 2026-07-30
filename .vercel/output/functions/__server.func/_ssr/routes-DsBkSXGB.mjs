@@ -3,16 +3,142 @@ import { h as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { c as createServerFn, i as TSS_SERVER_FUNCTION } from "./createServerFn-CIHAFgYl.mjs";
 import { n as string, r as ZodError, t as object } from "../_libs/zod.mjs";
 import { n as require_jsx_runtime, r as require_react } from "../_libs/react+tanstack__react-query.mjs";
-import { n as useTheme } from "./ThemeProvider-CnfSX_O2.mjs";
-import { a as skillEcosystem, i as research, n as profile, o as snapshot, r as projects, s as timeline, t as nowPlaying } from "./data-BmBBJa8h.mjs";
+import { n as useTheme } from "./ThemeProvider-yVDAGyHN.mjs";
+import { a as snapshot, i as skillEcosystem, n as projects, o as timeline, r as research, t as profile } from "./data-BJmZkLQi.mjs";
 import { a as useScroll, i as useMotionValue, n as useSpring, o as motion, r as useTransform, s as AnimatePresence, t as useReducedMotion } from "../_libs/framer-motion.mjs";
 import { C as ArrowUpRight, S as ArrowUp, T as ArrowDownRight, _ as Copy, b as Check, c as Mail, f as Github, g as Download, l as LoaderCircle, m as FileText, o as Moon, r as Sun, s as Menu, t as X, u as Linkedin, y as CircleAlert } from "../_libs/lucide-react.mjs";
-import { t as getServerFnById } from "../__23tanstack-start-server-fn-resolver-DF-BhOKZ.mjs";
+import { t as getServerFnById } from "../__23tanstack-start-server-fn-resolver-CIvIH4dQ.mjs";
 import { t as projectImages } from "./media-DxQncQ82.mjs";
 import { t as confetti_module_default } from "../_libs/canvas-confetti.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-B3_9X4em.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-DsBkSXGB.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
+var ease = [
+	.25,
+	.1,
+	.25,
+	1
+];
+var easeEmphasized = [
+	.22,
+	1,
+	.36,
+	1
+];
+var spring = {
+	snappy: {
+		type: "spring",
+		stiffness: 340,
+		damping: 30,
+		mass: .7
+	},
+	soft: {
+		type: "spring",
+		stiffness: 200,
+		damping: 25,
+		mass: .9
+	},
+	magnetic: {
+		type: "spring",
+		stiffness: 160,
+		damping: 22,
+		mass: .6
+	},
+	nav: {
+		type: "spring",
+		stiffness: 400,
+		damping: 36,
+		mass: .5
+	}
+};
+/**
+* useMagnetic — pointer inside the element pulls it toward the cursor.
+* Respects prefers-reduced-motion.
+*/
+function useMagnetic(ref, strength = .3) {
+	const reduced = useReducedMotion();
+	const x = useMotionValue(0);
+	const y = useMotionValue(0);
+	const sx = useSpring(x, spring.magnetic);
+	const sy = useSpring(y, spring.magnetic);
+	(0, import_react.useEffect)(() => {
+		const el = ref.current;
+		if (!el || reduced) return;
+		let raf = 0;
+		const move = (e) => {
+			const r = el.getBoundingClientRect();
+			const cx = e.clientX - (r.left + r.width / 2);
+			const cy = e.clientY - (r.top + r.height / 2);
+			cancelAnimationFrame(raf);
+			raf = requestAnimationFrame(() => {
+				x.set(cx * strength);
+				y.set(cy * strength);
+			});
+		};
+		const leave = () => {
+			cancelAnimationFrame(raf);
+			x.set(0);
+			y.set(0);
+		};
+		el.addEventListener("pointermove", move);
+		el.addEventListener("pointerleave", leave);
+		return () => {
+			el.removeEventListener("pointermove", move);
+			el.removeEventListener("pointerleave", leave);
+			cancelAnimationFrame(raf);
+		};
+	}, [
+		ref,
+		strength,
+		reduced,
+		x,
+		y
+	]);
+	return {
+		x: sx,
+		y: sy
+	};
+}
+/**
+* useScrollDissolve — scroll-driven opacity/scale/blur for hero elements.
+* Respects prefers-reduced-motion.
+*/
+function useScrollDissolve(inputRange) {
+	const { scrollY } = useScroll();
+	return {
+		opacity: useTransform(scrollY, inputRange, [
+			1,
+			.6,
+			0
+		]),
+		scale: useTransform(scrollY, [inputRange[0], inputRange[2]], [1, .92]),
+		filter: useTransform(useTransform(scrollY, [inputRange[0], inputRange[2]], [0, 8]), (b) => `blur(${b}px)`),
+		y: useTransform(scrollY, [inputRange[0], inputRange[2]], [0, -24])
+	};
+}
+/**
+* useActiveSection — IntersectionObserver-based active section tracker.
+* Respects the nav's rootMargin convention: fires when section crosses 45% viewport center.
+*/
+function useActiveSection(ids, rootMargin = "-45% 0px -50% 0px") {
+	const [active, setActive] = (0, import_react.useState)("");
+	(0, import_react.useEffect)(() => {
+		const obs = new IntersectionObserver((entries) => {
+			entries.forEach((e) => {
+				if (e.isIntersecting) setActive(e.target.id);
+			});
+		}, {
+			rootMargin,
+			threshold: 0
+		});
+		ids.forEach((id) => {
+			const el = document.getElementById(id);
+			if (el) obs.observe(el);
+		});
+		return () => obs.disconnect();
+	}, [ids, rootMargin]);
+	return active;
+}
 var links = [
 	{
 		href: "#work",
@@ -45,31 +171,17 @@ var links = [
 		id: "contact"
 	}
 ];
+var sectionIds = links.map((l) => l.id);
 function Nav() {
 	const { theme, setTheme } = useTheme();
 	const [scrolled, setScrolled] = (0, import_react.useState)(false);
-	const [active, setActive] = (0, import_react.useState)("");
+	const active = useActiveSection(sectionIds);
 	const [open, setOpen] = (0, import_react.useState)(false);
 	(0, import_react.useEffect)(() => {
 		const on = () => setScrolled(window.scrollY > 80);
 		on();
 		window.addEventListener("scroll", on, { passive: true });
 		return () => window.removeEventListener("scroll", on);
-	}, []);
-	(0, import_react.useEffect)(() => {
-		const obs = new IntersectionObserver((entries) => {
-			entries.forEach((e) => {
-				if (e.isIntersecting) setActive(e.target.id);
-			});
-		}, {
-			rootMargin: "-45% 0px -50% 0px",
-			threshold: 0
-		});
-		links.forEach((l) => {
-			const el = document.getElementById(l.id);
-			if (el) obs.observe(el);
-		});
-		return () => obs.disconnect();
 	}, []);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.nav, {
 		initial: {
@@ -106,12 +218,14 @@ function Nav() {
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 					className: "hidden md:flex flex-1 items-center justify-center gap-1 lg:gap-1.5",
+					role: "list",
 					children: links.map((l) => {
 						const isActive = active === l.id;
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
 							className: "relative",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
 								href: l.href,
+								"aria-current": isActive ? "true" : void 0,
 								className: `relative inline-flex items-center px-3 py-1.5 rounded-full text-[12.5px] whitespace-nowrap transition-colors duration-300 nav-liquid-item ${isActive ? "text-text" : "text-text-muted hover:text-text"}`,
 								children: [isActive && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.span, {
 									layoutId: "nav-liquid-pill",
@@ -132,11 +246,9 @@ function Nav() {
 					})
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "flex-1 md:hidden" }),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-					onClick: () => setTheme(theme === "dark" ? "light" : "dark"),
-					"aria-label": "Toggle theme",
-					className: "relative w-8 h-8 rounded-full flex items-center justify-center hover:bg-elevated/60 transition-colors text-text-muted hover:text-text overflow-hidden",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sun, { className: "w-4 h-4 absolute inset-auto transition-all duration-300 opacity-100 scale-100 dark:opacity-0 dark:scale-75" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Moon, { className: "w-4 h-4 absolute inset-auto transition-all duration-300 opacity-0 scale-75 dark:opacity-100 dark:scale-100" })]
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ThemeToggle, {
+					theme,
+					setTheme
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 					className: "md:hidden p-2 rounded-full hover:bg-elevated/60 text-text-muted hover:text-text",
@@ -162,22 +274,105 @@ function Nav() {
 		},
 		transition: { duration: .25 },
 		className: "fixed top-20 left-1/2 -translate-x-1/2 z-40 w-[min(94vw,820px)] md:hidden",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			className: "glass-nav rounded-3xl p-3",
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-				className: "flex flex-col",
-				children: links.map((l) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
-					href: l.href,
-					onClick: () => setOpen(false),
-					className: "flex items-center justify-between px-4 py-3 rounded-2xl text-[15px] text-text hover:bg-elevated/70 transition-colors",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: l.label }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "text-eyebrow",
-						children: "→"
-					})]
-				}) }, l.href))
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", {
+			"aria-label": "Mobile navigation",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "glass-nav rounded-3xl p-3",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+					className: "flex flex-col",
+					role: "list",
+					children: links.map((l) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+						href: l.href,
+						onClick: () => setOpen(false),
+						className: "flex items-center justify-between px-4 py-3 rounded-2xl text-[15px] text-text hover:bg-elevated/70 transition-colors",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: l.label }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "text-eyebrow",
+							"aria-hidden": true,
+							children: "→"
+						})]
+					}) }, l.href))
+				})
 			})
 		})
 	}) })] });
+}
+function ThemeToggle({ theme, setTheme }) {
+	const isDark = theme === "dark";
+	const [mounted, setMounted] = (0, import_react.useState)(false);
+	(0, import_react.useEffect)(() => {
+		setMounted(true);
+	}, []);
+	if (!mounted) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+		"aria-label": "Toggle theme",
+		className: "relative w-8 h-8 rounded-full flex items-center justify-center text-text-muted",
+		"aria-hidden": "true"
+	});
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+		onClick: () => setTheme(isDark ? "light" : "dark"),
+		"aria-label": isDark ? "Switch to light theme" : "Switch to dark theme",
+		className: "relative w-8 h-8 rounded-full flex items-center justify-center hover:bg-elevated/60 transition-colors text-text-muted hover:text-text",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, {
+			mode: "wait",
+			initial: false,
+			children: isDark ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.span, {
+				initial: {
+					rotate: -90,
+					scale: .6,
+					opacity: 0
+				},
+				animate: {
+					rotate: 0,
+					scale: 1,
+					opacity: 1
+				},
+				exit: {
+					rotate: 90,
+					scale: .6,
+					opacity: 0
+				},
+				transition: {
+					duration: .32,
+					ease: [
+						.22,
+						1,
+						.36,
+						1
+					]
+				},
+				className: "absolute inset-auto",
+				"aria-hidden": true,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Moon, { className: "w-4 h-4" })
+			}, "moon") : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.span, {
+				initial: {
+					rotate: 90,
+					scale: .6,
+					opacity: 0
+				},
+				animate: {
+					rotate: 0,
+					scale: 1,
+					opacity: 1
+				},
+				exit: {
+					rotate: -90,
+					scale: .6,
+					opacity: 0
+				},
+				transition: {
+					duration: .32,
+					ease: [
+						.22,
+						1,
+						.36,
+						1
+					]
+				},
+				className: "absolute inset-auto",
+				"aria-hidden": true,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sun, { className: "w-4 h-4" })
+			}, "sun")
+		})
+	});
 }
 /**
 * Hero portrait frame.
@@ -291,86 +486,6 @@ function PortraitPlaceholder() {
 }
 var profile_photo_default = "/assets/profile%20photo-DZg2KCY4.mp4";
 var Signature_default = "/assets/Signature-DyGnGP0L.png";
-var ease$1 = [
-	.25,
-	.1,
-	.25,
-	1
-];
-var spring = {
-	snappy: {
-		type: "spring",
-		stiffness: 340,
-		damping: 30,
-		mass: .7
-	},
-	soft: {
-		type: "spring",
-		stiffness: 200,
-		damping: 25,
-		mass: .9
-	},
-	magnetic: {
-		type: "spring",
-		stiffness: 160,
-		damping: 22,
-		mass: .6
-	},
-	nav: {
-		type: "spring",
-		stiffness: 400,
-		damping: 36,
-		mass: .5
-	}
-};
-/**
-* useMagnetic — pointer inside the element pulls it toward the cursor.
-* Respects prefers-reduced-motion.
-*/
-function useMagnetic(ref, strength = .3) {
-	const reduced = useReducedMotion();
-	const x = useMotionValue(0);
-	const y = useMotionValue(0);
-	const sx = useSpring(x, spring.magnetic);
-	const sy = useSpring(y, spring.magnetic);
-	(0, import_react.useEffect)(() => {
-		const el = ref.current;
-		if (!el || reduced) return;
-		let raf = 0;
-		const move = (e) => {
-			const r = el.getBoundingClientRect();
-			const cx = e.clientX - (r.left + r.width / 2);
-			const cy = e.clientY - (r.top + r.height / 2);
-			cancelAnimationFrame(raf);
-			raf = requestAnimationFrame(() => {
-				x.set(cx * strength);
-				y.set(cy * strength);
-			});
-		};
-		const leave = () => {
-			cancelAnimationFrame(raf);
-			x.set(0);
-			y.set(0);
-		};
-		el.addEventListener("pointermove", move);
-		el.addEventListener("pointerleave", leave);
-		return () => {
-			el.removeEventListener("pointermove", move);
-			el.removeEventListener("pointerleave", leave);
-			cancelAnimationFrame(raf);
-		};
-	}, [
-		ref,
-		strength,
-		reduced,
-		x,
-		y
-	]);
-	return {
-		x: sx,
-		y: sy
-	};
-}
 /**
 * Hero — desktop pairs a text column with a portrait anchor.
 * Calm and confident: no particles, no orbit. Ambient cursor light only.
@@ -422,19 +537,11 @@ function Hero() {
 		my,
 		shouldReduceMotion
 	]);
-	const { scrollY } = useScroll();
-	const mobilePortraitOpacity = useTransform(scrollY, [
+	const { opacity: mobilePortraitOpacity, scale: mobilePortraitScale, filter: mobilePortraitFilter, y: mobilePortraitY } = useScrollDissolve([
 		0,
 		260,
 		480
-	], [
-		1,
-		.6,
-		0
 	]);
-	const mobilePortraitScale = useTransform(scrollY, [0, 480], [1, .92]);
-	const mobilePortraitFilter = useTransform(useTransform(scrollY, [0, 480], [0, 8]), (b) => `blur(${b}px)`);
-	const mobilePortraitY = useTransform(scrollY, [0, 480], [0, -24]);
 	const portraitX = useTransform(sx, [-1, 1], [-6, 6]);
 	const portraitY = useTransform(sy, [-1, 1], [-6, 6]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
@@ -494,10 +601,10 @@ function Hero() {
 						transition: {
 							delay: .1,
 							duration: .55,
-							ease: ease$1
+							ease
 						},
 						className: "text-eyebrow mb-10 md:mb-16",
-						children: "Developer · building products end to end"
+						children: "Frontend Engineer & Product Designer"
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
 						style: {
@@ -541,7 +648,7 @@ function Hero() {
 									transition: {
 										delay: .65,
 										duration: .6,
-										ease: ease$1
+										ease
 									},
 									className: "text-display text-[clamp(1.15rem,2.2vw,1.85rem)] leading-tight mb-10 md:mb-14 max-w-2xl",
 									children: [
@@ -565,7 +672,7 @@ function Hero() {
 									transition: {
 										delay: .78,
 										duration: .6,
-										ease: ease$1
+										ease
 									},
 									className: "text-lede max-w-xl mb-12",
 									children: profile.intro
@@ -582,7 +689,7 @@ function Hero() {
 									transition: {
 										delay: .9,
 										duration: .55,
-										ease: ease$1
+										ease
 									},
 									className: "flex flex-col gap-6",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -632,7 +739,7 @@ function Hero() {
 							transition: {
 								delay: .5,
 								duration: .8,
-								ease: ease$1
+								ease
 							},
 							className: "hidden md:block lg:col-span-5",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
@@ -649,6 +756,7 @@ function Hero() {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-text-subtle hidden md:flex",
 				style: { animation: "breathe 5s ease-in-out infinite" },
+				"aria-hidden": true,
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					className: "text-eyebrow text-[0.62rem]",
 					children: "scroll"
@@ -661,25 +769,41 @@ function ResumeButton() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
 		href: profile.resume,
 		download: true,
-		className: "resume-cta group relative inline-flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2.5 rounded-full px-6 py-3 sm:py-[13px] border border-border/80 bg-surface/60 hover:bg-surface text-text hover:border-border transition-all duration-300 hover:scale-[1.02] active:scale-95",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Download, {
-			style: {
-				width: 16,
-				height: 16,
-				flexShrink: 0
-			},
-			className: "text-text-muted group-hover:text-accent transition-colors duration-300",
-			strokeWidth: 2
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-			style: {
-				fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif",
-				fontWeight: 500,
-				fontSize: 14,
-				letterSpacing: "-0.01em",
-				lineHeight: 1
-			},
-			children: "Resume"
-		})]
+		className: "resume-cta group relative inline-flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2.5 rounded-full px-6 py-3 sm:py-[13px] overflow-hidden",
+		style: {
+			border: "1px solid color-mix(in oklab, var(--border) 80%, transparent)",
+			background: "color-mix(in oklab, var(--surface) 55%, transparent)",
+			backdropFilter: "blur(14px) saturate(160%)",
+			color: "var(--text)",
+			boxShadow: "inset 0 1px 0 color-mix(in oklab, white 8%, transparent)"
+		},
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				"aria-hidden": true,
+				className: "absolute inset-0 pointer-events-none",
+				style: { background: "linear-gradient(135deg, transparent 35%, color-mix(in oklab, white 4%, transparent) 50%, transparent 65%)" }
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Download, {
+				style: {
+					width: 15,
+					height: 15,
+					flexShrink: 0
+				},
+				className: "relative z-10 text-text-muted group-hover:text-accent transition-colors duration-300",
+				strokeWidth: 2
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "relative z-10",
+				style: {
+					fontFamily: "var(--font-sans)",
+					fontWeight: 500,
+					fontSize: 14,
+					letterSpacing: "-0.01em",
+					lineHeight: 1
+				},
+				children: "Resume"
+			})
+		]
 	});
 }
 function QuickLink({ href, icon, label, external, primary }) {
@@ -690,6 +814,7 @@ function QuickLink({ href, icon, label, external, primary }) {
 		className: `quick-pill group inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[13px] border ${primary ? "border-accent/40 bg-accent/10 text-text" : "border-border bg-surface/60 text-text-muted"}`,
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 			className: `opacity-80 group-hover:opacity-100 transition-opacity ${primary ? "text-accent" : ""}`,
+			"aria-hidden": true,
 			children: icon
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: label })]
 	});
@@ -715,12 +840,6 @@ function NameReveal({ text, italic, delay = 0 }) {
 		})
 	});
 }
-var ease = [
-	.22,
-	1,
-	.36,
-	1
-];
 function Reveal({ children, delay = 0, y = 10, className, as: As = "div", ...rest }) {
 	const reduced = useReducedMotion();
 	const Cmp = motion[As];
@@ -740,12 +859,34 @@ function Reveal({ children, delay = 0, y = 10, className, as: As = "div", ...res
 		transition: {
 			duration: .5,
 			delay,
-			ease
+			ease: easeEmphasized
 		},
 		className,
 		...rest,
 		children
 	});
+}
+/**
+* SectionMark — editorial section divider used across all portfolio sections.
+* Displays a numeric index, hairline rule, and section label.
+*
+* Extracted from About.tsx to make it a proper shared UI primitive.
+*/
+function SectionMark({ index, label }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Reveal, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "flex items-center gap-4 mb-14",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "text-display italic text-3xl text-text-muted",
+				children: index
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "hairline h-px bg-border flex-1 max-w-[80px]" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "text-eyebrow",
+				children: label
+			})
+		]
+	}) });
 }
 /**
 * About — completely redesigned.
@@ -802,13 +943,25 @@ function About() {
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Reveal, {
 						delay: .14,
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "relative pl-7 py-1",
-							style: { borderLeft: "2px solid color-mix(in oklab, var(--accent) 55%, transparent)" },
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								className: "text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.6] text-text font-display italic tracking-[-0.02em]",
-								children: "\"At the end of the day, I just want to build software that works reliably, long after the launch hype fades.\""
-							})
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "relative pl-8 py-2",
+							style: { borderLeft: "2.5px solid color-mix(in oklab, var(--accent) 65%, transparent)" },
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								"aria-hidden": true,
+								className: "absolute -top-3 -left-1",
+								style: {
+									fontFamily: "\"Fraunces\", ui-serif, Georgia, serif",
+									fontSize: "3.5rem",
+									lineHeight: 1,
+									color: "var(--accent)",
+									opacity: .25,
+									fontWeight: 700
+								},
+								children: "“"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.65] text-text font-display italic tracking-[-0.02em]",
+								children: "“At the end of the day, I just want to build software that works reliably, long after the launch hype fades.”"
+							})]
 						})
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Reveal, {
@@ -929,10 +1082,12 @@ function About() {
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "flex flex-wrap gap-1.5",
 										children: group.items.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											className: "inline-flex items-center rounded-full border px-2.5 py-1 text-[12px] text-text",
+											className: "inline-flex items-center rounded-full border px-2.5 py-[5px] text-[11.5px] text-text transition-all duration-300 hover:border-accent/40 hover:bg-accent/5",
 											style: {
-												borderColor: "color-mix(in oklab, var(--border) 70%, transparent)",
-												background: "color-mix(in oklab, var(--surface) 50%, transparent)"
+												borderColor: "color-mix(in oklab, var(--border) 65%, transparent)",
+												background: "color-mix(in oklab, var(--surface) 45%, transparent)",
+												fontFamily: "var(--font-sans)",
+												letterSpacing: "-0.005em"
 											},
 											children: item
 										}, item))
@@ -990,22 +1145,6 @@ function ProductLine({ name, tagline, description, delay }) {
 			children: description
 		})] })]
 	});
-}
-function SectionMark({ index, label }) {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Reveal, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "flex items-center gap-4 mb-14",
-		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-				className: "text-display italic text-3xl text-text-muted",
-				children: index
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "hairline h-px bg-border flex-1 max-w-[80px]" }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-				className: "text-eyebrow",
-				children: label
-			})
-		]
-	}) });
 }
 function AnimatedSignature() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -1360,14 +1499,22 @@ function ArchiveRow({ project, index }) {
 		})
 	});
 }
-/**
-* Experience — a single vertical timeline that folds together
-* internships, projects, research, and learning. No school-level noise.
-*/
 function Experience() {
+	const containerRef = (0, import_react.useRef)(null);
+	const shouldReduceMotion = useReducedMotion();
+	const { scrollYProgress } = useScroll({
+		target: containerRef,
+		offset: ["start center", "end center"]
+	});
+	const smoothProgress = useSpring(scrollYProgress, {
+		stiffness: 400,
+		damping: 60,
+		mass: .8
+	});
+	const lineHeight = useTransform(shouldReduceMotion ? scrollYProgress : smoothProgress, [0, 1], ["0%", "100%"]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 		id: "experience",
-		className: "relative px-6 md:px-16 lg:px-24 py-32 md:py-40 max-w-4xl mx-auto scroll-mt-24",
+		className: "relative px-6 md:px-16 lg:px-24 py-32 md:py-48 max-w-5xl mx-auto scroll-mt-24",
 		"aria-labelledby": "experience-title",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SectionMark, {
@@ -1376,79 +1523,123 @@ function Experience() {
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Reveal, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
 				id: "experience-title",
-				className: "text-display text-[clamp(2.25rem,5vw,4.25rem)] leading-[0.98] mb-6",
-				children: ["Where the time went", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-					className: "italic text-text-muted",
-					children: " — projects, research, and the learning between."
+				className: "text-display text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.95] mb-6",
+				children: ["Career progression.", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					className: "block italic text-text-muted mt-2",
+					children: "The work, the research, and the build."
 				})]
 			}) }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Reveal, {
 				delay: .12,
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "text-lede max-w-2xl mb-16",
-					children: "Not every entry is a job. Some are things I built alone, some are rooms I sat in, some are ideas I kept working on after class ended."
+					className: "text-lede max-w-2xl mb-24 md:mb-32",
+					children: "A timeline of my growth as an engineer. From early academic foundations to published research and production-grade product development."
 				})
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ol", {
-				className: "relative border-l border-border/60 ml-2",
-				children: timeline.map((e, i) => {
-					const isResearch = e.kind === "Research Paper";
-					const content = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "grid grid-cols-1 md:grid-cols-[140px_1fr] gap-2 md:gap-8 items-baseline",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "text-eyebrow",
-							children: e.year
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "flex items-baseline gap-3 mb-1 flex-wrap",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: `text-[10px] font-mono uppercase tracking-[0.18em] ${isResearch ? "text-accent" : "text-accent"}`,
-									children: e.kind
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: `text-display ${isResearch ? "text-lg md:text-xl leading-snug max-w-2xl" : "text-xl md:text-2xl"}`,
-									children: e.title
-								})]
-							}),
-							e.where && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "text-text-muted text-sm mb-1",
-								children: e.where
-							}),
-							e.note && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "text-[14px] text-text-muted leading-relaxed",
-								children: e.note
-							})
-						] })]
-					});
-					return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.li, {
-						initial: {
-							opacity: 0,
-							x: -8
-						},
-						whileInView: {
-							opacity: 1,
-							x: 0
-						},
-						viewport: {
-							once: true,
-							margin: "-80px"
-						},
-						transition: {
-							delay: i * .08,
-							duration: .6
-						},
-						className: "relative pl-8 md:pl-12 pb-12 last:pb-0",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "absolute -left-[7px] top-2 w-3.5 h-3.5 rounded-full bg-bg border-2 border-accent" }), e.href ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
-							href: e.href,
-							className: "block group hover:opacity-100 opacity-100 transition-opacity",
-							children: [content, /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "mt-2 inline-block text-[11px] font-mono uppercase tracking-[0.18em] text-text-subtle group-hover:text-accent transition-colors",
-								children: "Read the paper →"
-							})]
-						}) : content]
-					}, `${e.year}-${e.title}`);
-				})
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "relative",
+				ref: containerRef,
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "absolute left-[15px] md:left-[23px] top-4 bottom-4 w-px bg-border/40",
+						"aria-hidden": true
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
+						className: "absolute left-[15px] md:left-[23px] top-4 w-px bg-accent origin-top",
+						style: { height: lineHeight },
+						"aria-hidden": true
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "space-y-12 md:space-y-16",
+						children: timeline.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TimelineItem, {
+							entry,
+							index
+						}, `${entry.year}-${entry.title}`))
+					})
+				]
 			})
 		]
+	});
+}
+function TimelineItem({ entry, index }) {
+	const isResearch = entry.kind === "Research Paper";
+	const isInternship = entry.kind === "Internship";
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.article, {
+		initial: {
+			opacity: 0,
+			y: 20
+		},
+		whileInView: {
+			opacity: 1,
+			y: 0
+		},
+		viewport: {
+			once: true,
+			margin: "-100px"
+		},
+		transition: {
+			duration: .6,
+			ease: [
+				.22,
+				1,
+				.36,
+				1
+			]
+		},
+		className: "relative group pl-12 md:pl-20",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "absolute left-[11px] md:left-[19px] top-2 w-[9px] h-[9px] rounded-full bg-bg border-2 border-border/80 group-hover:border-accent group-hover:bg-accent/20 transition-colors duration-300 z-10",
+			"aria-hidden": true
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "group/card relative rounded-[24px] p-6 md:p-8 border border-transparent hover:border-border/60 hover:bg-surface/30 transition-all duration-300 ease-out hover:shadow-[var(--shadow-lift)]",
+			children: [isInternship && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "absolute -inset-px rounded-[24px] bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none",
+				"aria-hidden": true
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "relative z-10 grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8 items-start",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "pt-1 md:pt-1.5 flex md:flex-col gap-3 md:gap-2 items-baseline md:items-start",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("time", {
+						className: "text-eyebrow text-text-muted font-medium",
+						children: entry.year
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: `text-[10px] font-mono uppercase tracking-[0.18em] px-2 py-0.5 rounded-full border ${isInternship ? "text-accent border-accent/30 bg-accent/5" : isResearch ? "text-[oklch(0.65_0.14_155)] border-[oklch(0.65_0.14_155)]/30 bg-[oklch(0.65_0.14_155)]/5" : "text-text-subtle border-border/60"}`,
+						children: entry.kind
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+						className: "text-display text-2xl md:text-[1.75rem] leading-[1.2] text-text group-hover/card:text-accent transition-colors duration-300",
+						children: entry.title
+					}),
+					(entry.where || entry.subtitle) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "mt-2 text-[15px] font-medium text-text",
+						children: [
+							entry.where && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: entry.where }),
+							entry.where && entry.subtitle && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "mx-2 text-text-muted",
+								children: "·"
+							}),
+							entry.subtitle && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-text-muted",
+								children: entry.subtitle
+							})
+						]
+					}),
+					entry.note && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "mt-4 text-[15px] leading-[1.7] text-text-muted max-w-2xl",
+						children: entry.note
+					}),
+					entry.href && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+						href: entry.href,
+						className: "inline-flex items-center gap-2 mt-6 text-[13px] font-medium text-text hover:text-accent transition-colors",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Read the paper" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "text-[10px] leading-none",
+							children: "↗"
+						})]
+					})
+				] })]
+			})]
+		})]
 	});
 }
 /**
@@ -1593,6 +1784,129 @@ function ResearchPaper() {
 								style: { color: "var(--text-muted)" },
 								children: "Note:"
 							}), " LightGBM (trained with Bayesian-optimized lag features) closely tracks actual load on weekday peaks. Prophet underestimates demand on high-variance Fridays. Rolling-origin validation; no future leakage."]
+						})
+					]
+				})
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Reveal, {
+				delay: .45,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "mt-10 overflow-hidden rounded-xl",
+					style: { border: "1px solid color-mix(in oklab, var(--border) 70%, transparent)" },
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "px-5 py-3 border-b",
+							style: {
+								borderColor: "color-mix(in oklab, var(--border) 60%, transparent)",
+								background: "color-mix(in oklab, var(--surface) 60%, transparent)"
+							},
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[11px] font-mono uppercase tracking-[0.16em]",
+								style: { color: "var(--text-muted)" },
+								children: "Table 1 — Model Performance on Held-out Test Set (40 days)"
+							})
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", {
+							className: "w-full text-left",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tr", {
+								style: { background: "color-mix(in oklab, var(--elevated) 40%, transparent)" },
+								children: [
+									"Model",
+									"RMSE (GW)",
+									"MAE (GW)",
+									"MAPE (%)",
+									"Peak Error"
+								].map((h) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+									className: "px-5 py-3 text-[10.5px] font-mono uppercase tracking-[0.14em]",
+									style: {
+										color: "var(--text-subtle)",
+										fontWeight: 500
+									},
+									children: h
+								}, h))
+							}) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", {
+								className: "border-t",
+								style: { borderColor: "color-mix(in oklab, var(--border) 40%, transparent)" },
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										className: "px-5 py-3",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-[13px] font-medium",
+											style: {
+												color: "var(--accent)",
+												fontFamily: "var(--font-mono)"
+											},
+											children: "LightGBM"
+										})
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										className: "px-5 py-3 text-[13px]",
+										style: { color: "var(--text)" },
+										children: "0.31"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										className: "px-5 py-3 text-[13px]",
+										style: { color: "var(--text)" },
+										children: "0.24"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										className: "px-5 py-3 text-[13px]",
+										style: { color: "var(--text)" },
+										children: "2.8%"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										className: "px-5 py-3 text-[13px]",
+										style: { color: "var(--text)" },
+										children: "0.44 GW"
+									})
+								]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", {
+								className: "border-t",
+								style: { borderColor: "color-mix(in oklab, var(--border) 40%, transparent)" },
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										className: "px-5 py-3",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-[13px]",
+											style: {
+												color: "var(--text-muted)",
+												fontFamily: "var(--font-mono)"
+											},
+											children: "Prophet"
+										})
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										className: "px-5 py-3 text-[13px]",
+										style: { color: "var(--text-muted)" },
+										children: "0.58"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										className: "px-5 py-3 text-[13px]",
+										style: { color: "var(--text-muted)" },
+										children: "0.43"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										className: "px-5 py-3 text-[13px]",
+										style: { color: "var(--text-muted)" },
+										children: "5.1%"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										className: "px-5 py-3 text-[13px]",
+										style: { color: "var(--text-muted)" },
+										children: "1.12 GW"
+									})
+								]
+							})] })]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "px-5 py-2 border-t text-[11px] leading-relaxed",
+							style: {
+								borderColor: "color-mix(in oklab, var(--border) 40%, transparent)",
+								color: "var(--text-subtle)",
+								fontFamily: "var(--font-mono)",
+								background: "color-mix(in oklab, var(--surface) 30%, transparent)"
+							},
+							children: "Lower is better. Rolling-origin validation; no look-ahead. MAPE computed on non-zero load windows."
 						})
 					]
 				})
@@ -1977,7 +2291,7 @@ function Skills() {
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
 									"aria-hidden": true,
 									viewBox: "-450 -450 900 900",
-									className: "absolute inset-0 w-full h-full opacity-[0.16]",
+									className: "absolute inset-0 w-full h-full opacity-[0.26]",
 									preserveAspectRatio: "xMidYMid slice",
 									children: rings.map((r, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
 										cx: 0,
@@ -1985,7 +2299,7 @@ function Skills() {
 										r: r.radius,
 										fill: "none",
 										stroke: "var(--border-strong)",
-										strokeWidth: .6,
+										strokeWidth: i === 0 ? .5 : .4,
 										strokeDasharray: i % 2 ? "1.5 8" : "1 12"
 									}, r.cluster))
 								}),
@@ -2101,6 +2415,8 @@ function Skills() {
 						className: "lg:sticky lg:top-28",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "soft-elevated p-8 min-h-[280px] relative overflow-hidden",
+							"aria-live": "polite",
+							"aria-atomic": "true",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 								"aria-hidden": true,
 								className: "absolute -top-20 -right-20 w-56 h-56 rounded-full opacity-50",
@@ -2147,13 +2463,35 @@ function Skills() {
 										initial: { opacity: 0 },
 										animate: { opacity: 1 },
 										exit: { opacity: 0 },
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-											className: "text-display italic text-2xl md:text-3xl text-text-muted mb-4 leading-tight",
-											children: "Hover any capsule."
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-											className: "text-[14px] text-text-subtle leading-relaxed",
-											children: "Every tool exists to help transform an idea into something you can actually open. Dots mark what I'm actively focused on."
-										})]
+										children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "text-display italic text-2xl md:text-3xl text-text-muted mb-5 leading-tight",
+												style: { letterSpacing: "-0.02em" },
+												children: "Hover any capsule."
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+												className: "text-[14px] text-text-subtle leading-relaxed mb-4",
+												children: "Every tool on this map has been used on a real project — sometimes for years, sometimes for a single stubborn afternoon."
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "flex items-center gap-2 pt-4",
+												style: { borderTop: "1px solid color-mix(in oklab, var(--border) 50%, transparent)" },
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "inline-block w-1.5 h-1.5 rounded-full",
+													style: {
+														background: "var(--accent)",
+														boxShadow: "0 0 6px var(--accent)"
+													}
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "text-[11px] text-text-subtle",
+													style: {
+														fontFamily: "var(--font-mono)",
+														letterSpacing: "0.1em"
+													},
+													children: "Focus dots mark active tools"
+												})]
+											})
+										]
 									}, "idle")
 								})]
 							})]
@@ -2338,8 +2676,7 @@ function Contact() {
 				}, 250);
 			} else throw new Error("Something went wrong");
 		} catch (err) {
-			if (err instanceof ZodError && err.errors && err.errors.length > 0) setErrorMessage(err.errors[0].message);
-			else if (err?.issues && err.issues.length > 0) setErrorMessage(err.issues[0].message);
+			if (err instanceof ZodError && err.issues.length > 0) setErrorMessage(err.issues[0].message);
 			else setErrorMessage(err?.message || "Failed to send message. Please try again later.");
 			setStatus("error");
 		}
@@ -2405,6 +2742,8 @@ function Contact() {
 									damping: 25
 								},
 								className: "flex flex-col items-center justify-center text-center py-16",
+								role: "status",
+								"aria-live": "polite",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
 										initial: { scale: 0 },
@@ -2623,41 +2962,87 @@ function ChannelLink({ href, label, hint, icon, external }) {
 	});
 }
 function Colophon() {
-	const [playing, setPlaying] = (0, import_react.useState)(true);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("footer", {
-		className: "relative px-6 md:px-16 lg:px-24 py-8 max-w-7xl mx-auto",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			className: "absolute top-0 left-6 right-6 md:left-16 md:right-16 lg:left-24 lg:right-24 h-px bg-gradient-to-r from-transparent via-border-strong/30 to-transparent",
-			"aria-hidden": true
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-4 py-4",
-			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-					className: "shrink-0 flex items-center gap-3 flex-wrap",
+		className: "relative px-6 md:px-16 lg:px-24 pt-24 pb-12 max-w-5xl mx-auto flex flex-col items-center",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "absolute top-0 left-6 right-6 md:left-16 md:right-16 lg:left-24 lg:right-24 h-px bg-gradient-to-r from-transparent via-border-strong/30 to-transparent",
+				"aria-hidden": true
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
+				initial: {
+					opacity: 0,
+					y: 15,
+					filter: "blur(4px)"
+				},
+				whileInView: {
+					opacity: 1,
+					y: 0,
+					filter: "blur(0px)"
+				},
+				viewport: {
+					once: true,
+					margin: "-50px"
+				},
+				transition: {
+					duration: .6,
+					ease: [
+						.22,
+						1,
+						.36,
+						1
+					]
+				},
+				className: "w-full flex flex-col items-center mb-20 md:mb-24",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+					className: "mb-8 font-mono text-xs tracking-[0.16em] uppercase opacity-[0.72] font-normal text-center",
+					style: { color: "var(--text)" },
+					children: "Chai. Code. Music. Repeat. ∞"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
+					whileHover: { y: -2 },
+					transition: {
+						duration: .3,
+						ease: "easeOut"
+					},
+					className: "relative w-full max-w-[340px] p-3 rounded-[20px] bg-surface/30 backdrop-blur-xl border border-border/40 hover:border-border/60 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 mx-auto",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "absolute inset-0 rounded-[20px] border border-white/5 pointer-events-none",
+						"aria-hidden": true
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("iframe", {
+						"data-testid": "embed-iframe",
+						style: { borderRadius: "12px" },
+						src: "https://open.spotify.com/embed/track/6bdpj89aYEBjhpsenXAsmO?utm_source=generator&theme=0&si=3cf742fc2a0d435b",
+						width: "100%",
+						height: "152",
+						frameBorder: "0",
+						allowFullScreen: false,
+						allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
+						loading: "lazy",
+						title: "Spotify Embed: Track",
+						className: "block"
+					})]
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
+				initial: { opacity: 0 },
+				whileInView: { opacity: 1 },
+				viewport: { once: true },
+				transition: {
+					duration: .8,
+					delay: .2
+				},
+				className: "w-full flex flex-col md:flex-row md:items-center md:justify-between gap-8 md:gap-4",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "shrink-0 flex items-center justify-center md:justify-start gap-3 flex-wrap",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						style: {
-							fontFamily: "var(--font-mono)",
-							fontSize: "10px",
-							letterSpacing: "0.2em",
-							textTransform: "uppercase",
-							color: "var(--text-subtle)",
-							fontWeight: 500
-						},
+						className: "font-mono text-[11px] tracking-[0.15em] uppercase text-text-subtle font-medium",
 						children: "Designed & Built by"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						style: {
-							fontFamily: "\"Fraunces\", ui-serif, Georgia, serif",
-							fontWeight: 400,
-							fontSize: "15px",
-							letterSpacing: "-0.01em",
-							fontStyle: "italic",
-							color: "var(--text)"
-						},
+						className: "font-serif text-[15px] tracking-[-0.01em] italic text-text",
 						children: "Chandan Mahapatra"
 					})]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex items-center gap-2",
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex items-center justify-center md:justify-end gap-2.5",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FooterLink, {
 							href: profile.github,
@@ -2677,177 +3062,9 @@ function Colophon() {
 							label: "Email"
 						})
 					]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex items-center gap-3 shrink-0 cursor-pointer select-none rounded-full border border-border/40 bg-surface/20 px-3 py-1.5 hover:border-border/60 transition-colors",
-					onClick: () => setPlaying((p) => !p),
-					role: "button",
-					"aria-label": playing ? "Pause" : "Play",
-					tabIndex: 0,
-					onKeyDown: (e) => e.key === "Enter" && setPlaying((p) => !p),
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex items-center gap-2",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
-								className: "shrink-0 w-3.5 h-3.5",
-								viewBox: "0 0 24 24",
-								fill: "currentColor",
-								style: { color: "#1DB954" },
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.623.623 0 0 1-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.623.623 0 0 1-.277-1.215c3.809-.87 7.077-.496 9.712 1.115a.623.623 0 0 1 .207.857zm1.223-2.722a.78.78 0 0 1-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.78.78 0 0 1-.973-.516.78.78 0 0 1 .516-.973c3.632-1.102 8.147-.568 11.237 1.328a.78.78 0 0 1 .257 1.07zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.937.937 0 0 1-.583-1.782c3.533-1.155 9.404-.932 13.115 1.338a.937.937 0 0 1-1.016 1.6z" })
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "flex items-end gap-[1.5px] h-2.5",
-								children: [
-									1,
-									2,
-									3
-								].map((i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
-									className: "w-[1.5px] rounded-full",
-									style: {
-										background: "#1DB954",
-										originY: 1
-									},
-									animate: playing ? { height: [
-										3,
-										8 + i % 2 * 2,
-										4,
-										9 - i,
-										3
-									] } : { height: 3 },
-									transition: playing ? {
-										duration: .8 + i * .15,
-										repeat: Infinity,
-										ease: "easeInOut"
-									} : { duration: .3 }
-								}, i))
-							})]
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex items-center gap-1.5 ml-1",
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "text-[12px] font-medium",
-									style: {
-										color: "var(--text)",
-										letterSpacing: "-0.01em"
-									},
-									children: nowPlaying.track
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "text-[10px]",
-									style: { color: "var(--text-subtle)" },
-									children: "·"
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "text-[10px] tracking-[0.1em]",
-									style: {
-										color: "var(--text-muted)",
-										fontFamily: "var(--font-mono)"
-									},
-									children: nowPlaying.artist
-								})
-							]
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "w-px h-3.5 mx-1 bg-border/60" }),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex items-center gap-2",
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-									className: "w-4 h-4 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity",
-									style: { color: "var(--text-muted)" },
-									"aria-label": "Previous",
-									onClick: (e) => e.stopPropagation(),
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
-										className: "w-2 h-2",
-										viewBox: "0 0 24 24",
-										fill: "currentColor",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("polygon", { points: "19,21 5,12 19,3" })
-									})
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-									className: "w-5 h-5 flex items-center justify-center rounded-full hover:scale-105",
-									style: {
-										background: "var(--text)",
-										color: "var(--bg)",
-										transition: "transform 0.2s"
-									},
-									"aria-label": playing ? "Pause" : "Play",
-									onClick: (e) => {
-										e.stopPropagation();
-										setPlaying((p) => !p);
-									},
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, {
-										mode: "wait",
-										initial: false,
-										children: playing ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.svg, {
-											initial: {
-												scale: .6,
-												opacity: 0
-											},
-											animate: {
-												scale: 1,
-												opacity: 1
-											},
-											exit: {
-												scale: .6,
-												opacity: 0
-											},
-											transition: { duration: .12 },
-											className: "w-[10px] h-[10px]",
-											viewBox: "0 0 24 24",
-											fill: "currentColor",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", {
-												x: "7",
-												y: "5",
-												width: "3",
-												height: "14",
-												rx: "0.5"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", {
-												x: "14",
-												y: "5",
-												width: "3",
-												height: "14",
-												rx: "0.5"
-											})]
-										}, "pause") : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.svg, {
-											initial: {
-												scale: .6,
-												opacity: 0
-											},
-											animate: {
-												scale: 1,
-												opacity: 1
-											},
-											exit: {
-												scale: .6,
-												opacity: 0
-											},
-											transition: { duration: .12 },
-											className: "w-[10px] h-[10px]",
-											viewBox: "0 0 24 24",
-											fill: "currentColor",
-											style: { marginLeft: "1px" },
-											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("polygon", { points: "6,4 20,12 6,20" })
-										}, "play")
-									})
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-									className: "w-4 h-4 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity",
-									style: { color: "var(--text-muted)" },
-									"aria-label": "Next",
-									onClick: (e) => e.stopPropagation(),
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
-										className: "w-2 h-2",
-										viewBox: "0 0 24 24",
-										fill: "currentColor",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("polygon", { points: "5,3 19,12 5,21" })
-									})
-								})
-							]
-						})
-					]
-				})
-			]
-		})]
+				})]
+			})
+		]
 	});
 }
 function FooterLink({ href, icon, label, external }) {
@@ -2855,12 +3072,12 @@ function FooterLink({ href, icon, label, external }) {
 		href,
 		target: external ? "_blank" : void 0,
 		rel: external ? "noreferrer" : void 0,
-		className: "inline-flex items-center gap-2 rounded-full border border-border/40 bg-surface/20 px-3.5 py-1.5 text-[11px] text-text-muted hover:text-text hover:border-border/60 hover:bg-surface/40 transition-all duration-300",
+		className: "inline-flex items-center justify-center gap-2 rounded-full border border-border/40 bg-surface/20 px-4 py-2 text-[12px] text-text-muted hover:text-text hover:border-border/70 hover:bg-surface/40 hover:shadow-sm transition-all duration-300",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 			className: "opacity-70",
 			children: icon
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-			style: { fontWeight: 500 },
+			className: "font-medium tracking-wide",
 			children: label
 		})]
 	});
@@ -2888,11 +3105,11 @@ function Intro({ onDone }) {
 			};
 		}
 		const timers = [
-			setTimeout(() => setScene("name"), 100),
-			setTimeout(() => setScene("line"), 1800),
-			setTimeout(() => setScene("signature"), 3500),
-			setTimeout(() => setExiting(true), 5500),
-			setTimeout(finish, 6300)
+			setTimeout(() => setScene("name"), 120),
+			setTimeout(() => setScene("line"), 1900),
+			setTimeout(() => setScene("signature"), 3600),
+			setTimeout(() => setExiting(true), 5800),
+			setTimeout(finish, 6700)
 		];
 		const onKey = (e) => {
 			if (e.key === "Escape" || e.key === "Enter" || e.key === " ") finish();
@@ -2913,7 +3130,7 @@ function Intro({ onDone }) {
 		setTimeout(() => {
 			setVisible(false);
 			setTimeout(onDone, 60);
-		}, 800);
+		}, 900);
 	};
 	const ease = [
 		.16,
@@ -2921,113 +3138,164 @@ function Intro({ onDone }) {
 		.3,
 		1
 	];
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: visible && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: visible && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
 		initial: { opacity: 1 },
 		animate: exiting ? { opacity: 0 } : { opacity: 1 },
 		transition: {
-			duration: .8,
+			duration: .9,
 			ease
 		},
-		className: "fixed inset-0 z-[200] grid place-items-center overflow-hidden bg-bg",
+		className: "fixed inset-0 z-[200] grid place-items-center overflow-hidden",
+		style: { backgroundColor: "var(--bg)" },
 		role: "dialog",
+		"aria-modal": "true",
 		"aria-label": "Welcome",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			className: "relative w-full max-w-5xl h-[300px] flex items-center justify-center px-6",
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(AnimatePresence, { children: [
-				scene === "name" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.p, {
-					initial: {
-						opacity: 0,
-						y: 18,
-						filter: "blur(4px)"
-					},
-					animate: {
-						opacity: 1,
-						y: 0,
-						filter: "blur(0px)"
-					},
-					exit: {
-						opacity: 0,
-						y: -12,
-						filter: "blur(2px)"
-					},
-					transition: {
-						duration: 1,
-						ease
-					},
-					className: "absolute text-center text-text",
-					style: {
-						fontFamily: "\"Fraunces\", ui-serif, Georgia, serif",
-						fontWeight: 500,
-						letterSpacing: "-0.04em",
-						fontSize: "clamp(2.8rem, 8vw, 6rem)",
-						lineHeight: 1.05,
-						fontFeatureSettings: "\"cv11\", \"ss01\"",
-						WebkitFontSmoothing: "antialiased",
-						MozOsxFontSmoothing: "grayscale"
-					},
-					children: "Hi, I'm Chandan."
-				}, "name"),
-				scene === "line" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.p, {
-					initial: {
-						opacity: 0,
-						y: 12,
-						filter: "blur(3px)"
-					},
-					animate: {
-						opacity: .65,
-						y: 0,
-						filter: "blur(0px)"
-					},
-					exit: {
-						opacity: 0,
-						y: -10,
-						filter: "blur(2px)"
-					},
-					transition: {
-						duration: 1,
-						ease
-					},
-					className: "absolute text-center text-text-muted",
-					style: {
-						fontFamily: "\"Fraunces\", ui-serif, Georgia, serif",
-						fontWeight: 400,
-						fontStyle: "italic",
-						letterSpacing: "-0.01em",
-						fontSize: "clamp(1.5rem, 4vw, 2.8rem)",
-						textTransform: "none",
-						WebkitFontSmoothing: "antialiased",
-						MozOsxFontSmoothing: "grayscale"
-					},
-					children: "Where design meets development."
-				}, "line"),
-				scene === "signature" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
-					initial: {
-						opacity: 0,
-						scale: .97
-					},
-					animate: {
-						opacity: 1,
-						scale: 1
-					},
-					exit: { opacity: 0 },
-					transition: {
-						duration: 1.6,
-						ease
-					},
-					className: "absolute flex justify-center items-center w-full",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-						src: "/assets/Signature-DyGnGP0L.png",
-						alt: "Chandan Mahapatra Signature",
-						className: "w-[70vw] sm:w-[55vw] md:w-[55vw] lg:w-[50vw] max-w-[680px] h-auto object-contain select-none",
-						style: {
-							mixBlendMode: "var(--signature-blend)",
-							filter: "var(--signature-filter)",
-							opacity: "var(--signature-opacity)"
-						}
-					})
-				}, "sig")
-			] })
-		})
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"aria-hidden": true,
+				className: "absolute inset-0 pointer-events-none",
+				style: {
+					background: "radial-gradient(60% 60% at 50% 50%, var(--glow-strong), transparent 75%)",
+					animation: "intro-glow-pulse 4s ease-in-out infinite"
+				}
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"aria-hidden": true,
+				className: "grain-overlay"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "relative w-full max-w-5xl h-[340px] flex items-center justify-center px-8",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(AnimatePresence, {
+					mode: "wait",
+					children: [
+						scene === "name" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.p, {
+							initial: {
+								opacity: 0,
+								y: 22,
+								filter: "blur(5px)"
+							},
+							animate: {
+								opacity: 1,
+								y: 0,
+								filter: "blur(0px)"
+							},
+							exit: {
+								opacity: 0,
+								y: -14,
+								filter: "blur(3px)"
+							},
+							transition: {
+								duration: 1.1,
+								ease
+							},
+							className: "absolute text-center text-text",
+							style: {
+								fontFamily: "\"Fraunces\", ui-serif, Georgia, serif",
+								fontWeight: 460,
+								letterSpacing: "-0.045em",
+								fontSize: "clamp(3rem, 8.5vw, 6.5rem)",
+								lineHeight: 1.02,
+								fontFeatureSettings: "\"cv11\", \"ss01\"",
+								WebkitFontSmoothing: "antialiased",
+								MozOsxFontSmoothing: "grayscale"
+							},
+							children: "Hi, I'm Chandan."
+						}, "name"),
+						scene === "line" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.p, {
+							initial: {
+								opacity: 0,
+								y: 14,
+								filter: "blur(4px)"
+							},
+							animate: {
+								opacity: .7,
+								y: 0,
+								filter: "blur(0px)"
+							},
+							exit: {
+								opacity: 0,
+								y: -12,
+								filter: "blur(3px)"
+							},
+							transition: {
+								duration: 1.1,
+								ease
+							},
+							className: "absolute text-center",
+							style: {
+								color: "var(--text-muted)",
+								fontFamily: "\"Fraunces\", ui-serif, Georgia, serif",
+								fontWeight: 360,
+								fontStyle: "italic",
+								letterSpacing: "-0.015em",
+								fontSize: "clamp(1.55rem, 4.2vw, 3rem)",
+								lineHeight: 1.2,
+								WebkitFontSmoothing: "antialiased",
+								MozOsxFontSmoothing: "grayscale"
+							},
+							children: "Where design meets development."
+						}, "line"),
+						scene === "signature" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
+							initial: {
+								opacity: 0,
+								scale: .96,
+								filter: "blur(3px)"
+							},
+							animate: {
+								opacity: 1,
+								scale: 1,
+								filter: "blur(0px)"
+							},
+							exit: {
+								opacity: 0,
+								scale: 1.02
+							},
+							transition: {
+								duration: 1.8,
+								ease: [
+									.22,
+									1,
+									.36,
+									1
+								]
+							},
+							className: "absolute flex justify-center items-center w-full",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+								src: "/assets/Signature-DyGnGP0L.png",
+								alt: "Chandan Mahapatra Signature",
+								className: "w-[72vw] sm:w-[58vw] md:w-[56vw] lg:w-[52vw] max-w-[700px] h-auto object-contain select-none",
+								style: {
+									mixBlendMode: "var(--signature-blend)",
+									filter: "var(--signature-filter)",
+									opacity: "var(--signature-opacity)"
+								}
+							})
+						}, "sig")
+					]
+				})
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.button, {
+				initial: { opacity: 0 },
+				animate: { opacity: .4 },
+				transition: {
+					delay: 1.2,
+					duration: 1
+				},
+				onClick: finish,
+				className: "absolute bottom-10 left-1/2 -translate-x-1/2 hover:opacity-70 transition-opacity",
+				style: {
+					fontFamily: "var(--font-mono)",
+					fontSize: "0.65rem",
+					letterSpacing: "0.22em",
+					textTransform: "uppercase",
+					color: "var(--text-subtle)",
+					background: "none",
+					border: "none",
+					cursor: "pointer"
+				},
+				children: "Press Esc to skip"
+			})
+		]
 	}, "intro") });
 }
 /**
@@ -3095,7 +3363,7 @@ function BackToTop() {
 			},
 			transition: {
 				duration: .22,
-				ease: ease$1
+				ease
 			},
 			className: "grid place-items-center",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowUp, { className: "w-4 h-4" })

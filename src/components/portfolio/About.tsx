@@ -1,6 +1,8 @@
 import { snapshot } from "./data";
 import { Reveal } from "../ui/Reveal";
 import { motion } from "framer-motion";
+import { SectionMark } from "../ui/SectionMark";
+
 
 /**
  * About — completely redesigned.
@@ -48,13 +50,28 @@ export function About() {
           {/* Philosophy statement — editorial pull quote */}
           <Reveal delay={0.14}>
             <div
-              className="relative pl-7 py-1"
+              className="relative pl-8 py-2"
               style={{
-                borderLeft: "2px solid color-mix(in oklab, var(--accent) 55%, transparent)",
+                borderLeft: "2.5px solid color-mix(in oklab, var(--accent) 65%, transparent)",
               }}
             >
-              <p className="text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.6] text-text font-display italic tracking-[-0.02em]">
-                "At the end of the day, I just want to build software that works reliably, long after the launch hype fades."
+              {/* Decorative open-quote mark */}
+              <span
+                aria-hidden
+                className="absolute -top-3 -left-1"
+                style={{
+                  fontFamily: '"Fraunces", ui-serif, Georgia, serif',
+                  fontSize: "3.5rem",
+                  lineHeight: 1,
+                  color: "var(--accent)",
+                  opacity: 0.25,
+                  fontWeight: 700,
+                }}
+              >
+                “
+              </span>
+              <p className="text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.65] text-text font-display italic tracking-[-0.02em]">
+                “At the end of the day, I just want to build software that works reliably, long after the launch hype fades.”
               </p>
             </div>
           </Reveal>
@@ -147,10 +164,12 @@ export function About() {
                       {group.items.map((item) => (
                         <span
                           key={item}
-                          className="inline-flex items-center rounded-full border px-2.5 py-1 text-[12px] text-text"
+                          className="inline-flex items-center rounded-full border px-2.5 py-[5px] text-[11.5px] text-text transition-all duration-300 hover:border-accent/40 hover:bg-accent/5"
                           style={{
-                            borderColor: "color-mix(in oklab, var(--border) 70%, transparent)",
-                            background: "color-mix(in oklab, var(--surface) 50%, transparent)",
+                            borderColor: "color-mix(in oklab, var(--border) 65%, transparent)",
+                            background: "color-mix(in oklab, var(--surface) 45%, transparent)",
+                            fontFamily: "var(--font-sans)",
+                            letterSpacing: "-0.005em",
                           }}
                         >
                           {item}
@@ -209,17 +228,6 @@ function ProductLine({
   );
 }
 
-export function SectionMark({ index, label }: { index: string; label: string }) {
-  return (
-    <Reveal>
-      <div className="flex items-center gap-4 mb-14">
-        <span className="text-display italic text-3xl text-text-muted">{index}</span>
-        <span className="hairline h-px bg-border flex-1 max-w-[80px]" />
-        <span className="text-eyebrow">{label}</span>
-      </div>
-    </Reveal>
-  );
-}
 
 function AnimatedSignature() {
   return (

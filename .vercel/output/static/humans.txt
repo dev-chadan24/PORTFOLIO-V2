@@ -1,0 +1,14 @@
+/* TEAM */
+Developer: Chandan Mahapatra
+Role: Frontend Engineer & Product Designer
+Location: Jeypore, Odisha, India
+GitHub: github.com/dev-chadan24
+LinkedIn: linkedin.com/in/chandan-mahapatra
+
+/* SITE */
+Last update: 2026-07-30
+Standards: HTML5, CSS3, ES2022
+Components: React 19, TanStack Start, Framer Motion
+Fonts: Fraunces, Inter Tight, JetBrains Mono
+Colors: OKLCH color space with warm editorial palettes
+Deploy: Vercel Edge Network

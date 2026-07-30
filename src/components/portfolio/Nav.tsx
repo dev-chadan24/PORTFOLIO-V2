@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sun, Moon, Menu, X } from "lucide-react";
 import { useTheme } from "../ThemeProvider";
+import { useActiveSection } from "../../lib/motion";
 
 const links = [
   { href: "#work", label: "Work", id: "work" },
@@ -12,10 +13,12 @@ const links = [
   { href: "#contact", label: "Contact", id: "contact" },
 ];
 
+const sectionIds = links.map((l) => l.id);
+
 export function Nav() {
   const { theme, setTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState<string>("");
+  const active = useActiveSection(sectionIds);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -23,22 +26,6 @@ export function Nav() {
     on();
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
-  }, []);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(e.target.id);
-        });
-      },
-      { rootMargin: "-45% 0px -50% 0px", threshold: 0 },
-    );
-    links.forEach((l) => {
-      const el = document.getElementById(l.id);
-      if (el) obs.observe(el);
-    });
-    return () => obs.disconnect();
   }, []);
 
   return (
@@ -63,13 +50,14 @@ export function Nav() {
             Chandan<span className="italic text-text-muted"> Mahapatra</span>
           </a>
 
-          <ul className="hidden md:flex flex-1 items-center justify-center gap-1 lg:gap-1.5">
+          <ul className="hidden md:flex flex-1 items-center justify-center gap-1 lg:gap-1.5" role="list">
             {links.map((l) => {
               const isActive = active === l.id;
               return (
                 <li key={l.href} className="relative">
                   <a
                     href={l.href}
+                    aria-current={isActive ? "true" : undefined}
                     className={`relative inline-flex items-center px-3 py-1.5 rounded-full text-[12.5px] whitespace-nowrap transition-colors duration-300 nav-liquid-item ${
                       isActive ? "text-text" : "text-text-muted hover:text-text"
                     }`}
@@ -91,14 +79,8 @@ export function Nav() {
 
           <div className="flex-1 md:hidden" />
 
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            aria-label="Toggle theme"
-            className="relative w-8 h-8 rounded-full flex items-center justify-center hover:bg-elevated/60 transition-colors text-text-muted hover:text-text overflow-hidden"
-          >
-            <Sun className="w-4 h-4 absolute inset-auto transition-all duration-300 opacity-100 scale-100 dark:opacity-0 dark:scale-75" />
-            <Moon className="w-4 h-4 absolute inset-auto transition-all duration-300 opacity-0 scale-75 dark:opacity-100 dark:scale-100" />
-          </button>
+          <ThemeToggle theme={theme} setTheme={setTheme} />
+
           <button
             className="md:hidden p-2 rounded-full hover:bg-elevated/60 text-text-muted hover:text-text"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -119,25 +101,91 @@ export function Nav() {
             transition={{ duration: 0.25 }}
             className="fixed top-20 left-1/2 -translate-x-1/2 z-40 w-[min(94vw,820px)] md:hidden"
           >
-            <div className="glass-nav rounded-3xl p-3">
-              <ul className="flex flex-col">
-                {links.map((l) => (
-                  <li key={l.href}>
-                    <a
-                      href={l.href}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center justify-between px-4 py-3 rounded-2xl text-[15px] text-text hover:bg-elevated/70 transition-colors"
-                    >
-                      <span>{l.label}</span>
-                      <span className="text-eyebrow">→</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <nav aria-label="Mobile navigation">
+              <div className="glass-nav rounded-3xl p-3">
+                <ul className="flex flex-col" role="list">
+                  {links.map((l) => (
+                    <li key={l.href}>
+                      <a
+                        href={l.href}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center justify-between px-4 py-3 rounded-2xl text-[15px] text-text hover:bg-elevated/70 transition-colors"
+                      >
+                        <span>{l.label}</span>
+                        <span className="text-eyebrow" aria-hidden>→</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
 }
+
+function ThemeToggle({
+  theme,
+  setTheme,
+}: {
+  theme: string;
+  setTheme: (t: "dark" | "light") => void;
+}) {
+  const isDark = theme === "dark";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    // Neutral placeholder during SSR to avoid hydration mismatch
+    return (
+      <button
+        aria-label="Toggle theme"
+        className="relative w-8 h-8 rounded-full flex items-center justify-center text-text-muted"
+        aria-hidden="true"
+      />
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      className="relative w-8 h-8 rounded-full flex items-center justify-center hover:bg-elevated/60 transition-colors text-text-muted hover:text-text"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {isDark ? (
+          <motion.span
+            key="moon"
+            initial={{ rotate: -90, scale: 0.6, opacity: 0 }}
+            animate={{ rotate: 0, scale: 1, opacity: 1 }}
+            exit={{ rotate: 90, scale: 0.6, opacity: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-auto"
+            aria-hidden
+          >
+            <Moon className="w-4 h-4" />
+          </motion.span>
+        ) : (
+          <motion.span
+            key="sun"
+            initial={{ rotate: 90, scale: 0.6, opacity: 0 }}
+            animate={{ rotate: 0, scale: 1, opacity: 1 }}
+            exit={{ rotate: -90, scale: 0.6, opacity: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-auto"
+            aria-hidden
+          >
+            <Sun className="w-4 h-4" />
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </button>
+  );
+}
+
+

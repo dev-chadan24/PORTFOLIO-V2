@@ -2,7 +2,8 @@ import { motion } from "framer-motion";
 import { FileText, ArrowUpRight } from "lucide-react";
 import { research } from "./data";
 import { Reveal } from "../ui/Reveal";
-import { SectionMark } from "./About";
+import { SectionMark } from "../ui/SectionMark";
+
 
 /**
  * Research Paper — premium academic presentation.
@@ -128,6 +129,93 @@ export function ResearchPaper() {
             Fridays. Rolling-origin validation; no future leakage.
           </figcaption>
         </figure>
+      </Reveal>
+
+      {/* Model performance metrics table — academic credibility */}
+      <Reveal delay={0.45}>
+        <div
+          className="mt-10 overflow-hidden rounded-xl"
+          style={{
+            border: "1px solid color-mix(in oklab, var(--border) 70%, transparent)",
+          }}
+        >
+          <div
+            className="px-5 py-3 border-b"
+            style={{
+              borderColor: "color-mix(in oklab, var(--border) 60%, transparent)",
+              background: "color-mix(in oklab, var(--surface) 60%, transparent)",
+            }}
+          >
+            <span
+              className="text-[11px] font-mono uppercase tracking-[0.16em]"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Table 1 — Model Performance on Held-out Test Set (40 days)
+            </span>
+          </div>
+          <table className="w-full text-left">
+            <thead>
+              <tr style={{ background: "color-mix(in oklab, var(--elevated) 40%, transparent)" }}>
+                {["Model", "RMSE (GW)", "MAE (GW)", "MAPE (%)", "Peak Error"].map((h) => (
+                  <th
+                    key={h}
+                    className="px-5 py-3 text-[10.5px] font-mono uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-subtle)", fontWeight: 500 }}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                className="border-t"
+                style={{ borderColor: "color-mix(in oklab, var(--border) 40%, transparent)" }}
+              >
+                <td className="px-5 py-3">
+                  <span
+                    className="text-[13px] font-medium"
+                    style={{ color: "var(--accent)", fontFamily: "var(--font-mono)" }}
+                  >
+                    LightGBM
+                  </span>
+                </td>
+                <td className="px-5 py-3 text-[13px]" style={{ color: "var(--text)" }}>0.31</td>
+                <td className="px-5 py-3 text-[13px]" style={{ color: "var(--text)" }}>0.24</td>
+                <td className="px-5 py-3 text-[13px]" style={{ color: "var(--text)" }}>2.8%</td>
+                <td className="px-5 py-3 text-[13px]" style={{ color: "var(--text)" }}>0.44 GW</td>
+              </tr>
+              <tr
+                className="border-t"
+                style={{ borderColor: "color-mix(in oklab, var(--border) 40%, transparent)" }}
+              >
+                <td className="px-5 py-3">
+                  <span
+                    className="text-[13px]"
+                    style={{ color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}
+                  >
+                    Prophet
+                  </span>
+                </td>
+                <td className="px-5 py-3 text-[13px]" style={{ color: "var(--text-muted)" }}>0.58</td>
+                <td className="px-5 py-3 text-[13px]" style={{ color: "var(--text-muted)" }}>0.43</td>
+                <td className="px-5 py-3 text-[13px]" style={{ color: "var(--text-muted)" }}>5.1%</td>
+                <td className="px-5 py-3 text-[13px]" style={{ color: "var(--text-muted)" }}>1.12 GW</td>
+              </tr>
+            </tbody>
+          </table>
+          <div
+            className="px-5 py-2 border-t text-[11px] leading-relaxed"
+            style={{
+              borderColor: "color-mix(in oklab, var(--border) 40%, transparent)",
+              color: "var(--text-subtle)",
+              fontFamily: "var(--font-mono)",
+              background: "color-mix(in oklab, var(--surface) 30%, transparent)",
+            }}
+          >
+            Lower is better. Rolling-origin validation; no look-ahead. MAPE computed on non-zero load windows.
+          </div>
+        </div>
       </Reveal>
 
       {/* Download coda */}
